@@ -14,8 +14,8 @@ import ButtonComponent from '../ButtonComponent/ButtonComponent'
 const ProductDetailComponent = () => {
   const onChange = () => { };
   return (
-    <Row style={{ background: '#fff' }}>
-      <Col span={10} style={{ padding: '10px' }}>
+    <Row style={{ background: '#fff', padding: '16px', borderRadius: '4px' }}>
+      <Col span={10} style={{ borderRight: '1px solid #e5e5e5', paddingRight: '10px' }}>
         <Image src={Em} alt='image product' preview={false} />
         <Row style={{ marginTop: '10px', justifyContent: 'space-between' }}>
           <WrapperStyleImageSmallCol span={4}>
