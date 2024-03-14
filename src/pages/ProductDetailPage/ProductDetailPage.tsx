@@ -1,6 +1,5 @@
 import React from 'react'
 import ProductDetailComponent from '../../components/ProductDetailComponent/ProductDetailComponent'
-import { Col, Row } from 'antd'
 
 const ProductDetailPage = () => {
     return (

@@ -24,7 +24,7 @@ const routes = [
         isShowHeader: true,
     },
     {
-        path: '/:type',
+        path: '/product/:type',
         page: TypeProductPage ,
         isShowHeader: true,
     },
@@ -34,7 +34,7 @@ const routes = [
         isShowHeader: false,
     },
     {
-    path: '/sign-up',
+        path: '/sign-up',
         page: SignUpPage ,
         isShowHeader: false,
     },

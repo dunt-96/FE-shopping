@@ -1,20 +1,23 @@
-import React, { Fragment } from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { Fragment } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
-import { Button, Flex } from 'antd';
-import styled from 'styled-components';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage/HomePage';
-import OrderPage from './pages/OrderPage/OrderPage';
-import routes from './routes'
-import HeaderComponent from './components/HeaderComponent/HeaderComponent';
 import DefaultComponent from './components/DefaultComponent/DefaultComponent';
+import routes from './routes';
 
 function App() {
-  const Button1 = styled.button({
-    backgroundColor: 'red'
-  });
+  // useEffect(() => {
+  //   fetchApi();
+  // }, []);
+  console.log('api', process.env.REACT_APP_API_URL);
+  const fetchApi = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all`);
+    console.log('res', res);
+    return res.data;
+  }
+
+  const query = useQuery({ queryKey: ['todo'], queryFn: fetchApi });
 
   return (
     <div>

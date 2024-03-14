@@ -14,7 +14,7 @@ const HomePage = () => {
 
     return (
         <>
-            <div style={{ padding: '0 120px' }}>
+            <div style={{ width: '2150px', margin: '0 auto' }}>
                 <WrapperTypeProduct >
                     {arr.map((val, idx) => {
                         return <TypeProduct name={val} key={idx}></TypeProduct>
@@ -23,29 +23,32 @@ const HomePage = () => {
                 </WrapperTypeProduct >
 
             </div >
-            <div id='container' style={{ backgroundColor: '#efefef', padding: '0 120px', height: '1000px', width: '100%' }}>
-                <SliderComponent arrImages={[slider1, slider2, slider3]}></SliderComponent>
-                <WrapperProducts style={{ marginTop: '20px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '30px' }}>
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                    <CardComponent />
-                </WrapperProducts>
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-                    <WrapperBtnMore styleTextBtn={{ fontWeight: 500 }} textBtn='Xem them' type='out-line' styleBtn={{ border: '1px solid rgb(11, 116, 229)', borderRadius: '4px', color: 'rgb(11, 116, 229)', fontWeight: '500', width: '240px', height: '38px' }} />
+            <div className='body' style={{ width: '100%', background: '#efefef' }}>
+                <div id='container' style={{ height: '1000px', width: '2150px', margin: '0 auto' }}>
+                    <SliderComponent arrImages={[slider1, slider2, slider3]}></SliderComponent>
+                    <WrapperProducts style={{ marginTop: '20px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '30px' }}>
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                        <CardComponent />
+                    </WrapperProducts>
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                        <WrapperBtnMore styleTextBtn={{ fontWeight: 500 }} textBtn='Xem them' type='out-line' styleBtn={{ border: '1px solid rgb(11, 116, 229)', borderRadius: '4px', color: 'rgb(11, 116, 229)', width: '240px', height: '38px' }} />
+                    </div>
+                    <NavbarComponent></NavbarComponent>
                 </div>
-                <NavbarComponent></NavbarComponent>
             </div>
+
         </>
     )
 }

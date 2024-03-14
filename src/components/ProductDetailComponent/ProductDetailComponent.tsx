@@ -1,15 +1,13 @@
-import { Col, Image, InputNumber, Row } from 'antd'
-import React from 'react'
-import Em from '../../assets/images/em.jpg'
-import AnhvaEm from '../../assets/images/anhvaem.jpg'
-import Anh from '../../assets/images/anh.jpg'
-import { WrapperAddressProduct, WrapperBtnQualityProduct, WrapperInputNumber, WrapperPriceProduct, WrapperPriceTextProduct, WrapperQualityProduct, WrapperStyleImageSmall, WrapperStyleImageSmallCol, WrapperStyleNameProduct, WrapperStyleTextSell } from './style'
 import {
-  StarFilled,
+  MinusOutlined,
   PlusOutlined,
-  MinusOutlined
-} from '@ant-design/icons';
+  StarFilled
+} from '@ant-design/icons'
+import { Col, Image, Row } from 'antd'
+import Anh from '../../assets/images/anh.jpg'
+import Em from '../../assets/images/em.jpg'
 import ButtonComponent from '../ButtonComponent/ButtonComponent'
+import { WrapperAddressProduct, WrapperInputNumber, WrapperPriceProduct, WrapperPriceTextProduct, WrapperQualityProduct, WrapperStyleImageSmall, WrapperStyleImageSmallCol, WrapperStyleNameProduct, WrapperStyleTextSell } from './style'
 
 const ProductDetailComponent = () => {
   const onChange = () => { };

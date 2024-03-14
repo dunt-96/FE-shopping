@@ -22,7 +22,7 @@ const CardComponent = () => {
         <StarFilled style={{ fontSize: '12px', color: 'rgb(253, 216, 54)', }} />
         <WrapperStyleTextSell>| Da ban 1000+</WrapperStyleTextSell>
       </WrapperReportText>
-      <WrapperPriceText>1.000.000d <WrapperDiscountPriceText> -5%</WrapperDiscountPriceText></WrapperPriceText>
+      <WrapperPriceText><span style={{ marginRight: '8px' }}>1.000.000d</span> <WrapperDiscountPriceText> -5%</WrapperDiscountPriceText></WrapperPriceText>
     </WrapperCardStyle>
 
   )
