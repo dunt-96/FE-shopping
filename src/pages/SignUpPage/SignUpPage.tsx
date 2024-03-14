@@ -13,6 +13,27 @@ import { WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from '.
 const SignUpPage = () => {
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [isShowConfirmPassword, setIsConfirmShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const handleOnchangeEmail = (val: any) => {
+        console.log('e', val.target.value);
+        setEmail(val.target.value);
+    }
+    const handleOnchangePassword = (val: any) => {
+        console.log('pw', val.target.value);
+        setPassword(val.target.value)
+    }
+    const handleOnchangeConfirmPassword = (val: any) => {
+        console.log('confirm pw', val.target.value);
+        setConfirmPassword(val.target.value);
+    }
+    const handleSignUp = () => {
+
+    }
+    const [disabledBtnSignIn, isSetDisableBtnSignIn] = useState(!email || !password || !confirmPassword);
+
     const navigate = useNavigate();
     const handleNavigateSignIn = () => {
         navigate('/sign-in');
@@ -23,14 +44,14 @@ const SignUpPage = () => {
                 <WrapperContainerLeft>
                     <h1>Xin chao</h1>
                     <p>Dang nhap hoac tao tai khoan</p>
-                    <InputForm placeholder='abc@gmail.com' style={{ marginBottom: '10px' }} />
+                    <InputForm placeholder='abc@gmail.com' style={{ marginBottom: '10px' }} value={email} onChange={handleOnchangeEmail} />
                     <div style={{ position: 'relative' }}>
                         <span onClick={() => setIsShowPassword(!isShowPassword)} style={{ position: 'absolute', top: '4px', right: '8px', zIndex: 10 }}>
                             {
                                 isShowPassword ? (<EyeFilled></EyeFilled>) : (<EyeInvisibleFilled></EyeInvisibleFilled>)
                             }
                         </span>
-                        <InputForm placeholder='password' type={isShowPassword ? "text" : 'password'} style={{ marginBottom: '10px' }} />
+                        <InputForm placeholder='password' type={isShowPassword ? "text" : 'password'} style={{ marginBottom: '10px' }} value={password} onChange={handleOnchangePassword} />
                     </div>
                     <div style={{ position: 'relative' }}>
                         <span onClick={() => setIsConfirmShowPassword(!isShowConfirmPassword)} style={{ position: 'absolute', top: '4px', right: '8px', zIndex: 10 }}>
@@ -38,14 +59,16 @@ const SignUpPage = () => {
                                 isShowConfirmPassword ? (<EyeFilled></EyeFilled>) : (<EyeInvisibleFilled></EyeInvisibleFilled>)
                             }
                         </span>
-                        <InputForm placeholder='confirm password' type={isShowConfirmPassword ? "text" : 'password'} />
+                        <InputForm placeholder='confirm password' type={isShowConfirmPassword ? "text" : 'password'} value={confirmPassword} onChange={handleOnchangeConfirmPassword} />
                     </div>
                     <ButtonComponent
                         size={40}
-                        textBtn='Chon mua'
+                        onClick={handleSignUp}
+                        disabled={disabledBtnSignIn}
+                        textBtn='Dang ky'
                         styleTextBtn={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
                         styleBtn={{
-                            background: 'rgb(255, 57, 69)',
+                            background: disabledBtnSignIn ? '#cecece' : 'rgb(255, 57, 69)',
                             height: '48px',
                             width: '100%',
                             border: 'none',

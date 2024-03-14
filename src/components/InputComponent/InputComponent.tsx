@@ -6,7 +6,6 @@ const InputComponent = (props: any) => {
     return (
         <Input
             size={size}
-            bordered={false}
             placeholder={placeholder}
             style={{ backgroundColor: backgroundInputColor, borderRadius: '5px 0 0 5px' }}
         />
