@@ -36,8 +36,7 @@ const SignInPage = () => {
   useEffect(() => {
     // handleOnClickSingIn();
     if (isSuccess) {
-      console.log('data111', data.data.access_token);
-      // navigate('/');
+      navigate('/');
       localStorage.setItem('access_token', JSON.stringify(data?.data.access_token))
       localStorage.setItem('refresh_token', JSON.stringify(data?.data.refresh_token))
       if (data?.data.access_token ?? '') {

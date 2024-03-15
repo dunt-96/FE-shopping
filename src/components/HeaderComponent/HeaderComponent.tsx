@@ -3,16 +3,41 @@ import {
     ShoppingCartOutlined,
     UserOutlined
 } from '@ant-design/icons';
-import { Badge, Col } from 'antd';
+import { Badge, Col, Popover } from 'antd';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../redux/hooks';
+import { resetUser, userState } from '../../redux/slices/userSlice';
+import UserService from '../../services/UserService';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
-import { WrapperHeader, WrapperHeaderAccount, WrapperTextHeader, WrapperTextHeaderSmall } from './style';
+import { Loading } from '../Loading/Loading';
+import { WrapperContentPopup, WrapperHeader, WrapperHeaderAccount, WrapperTextHeader, WrapperTextHeaderSmall } from './style';
 
 const HeaderComponent = () => {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const handleNavigation = () => {
         navigate('/sign-in')
     }
+    const user = useSelector(userState);
+    const [loading, setLoading] = useState(false);
+
+    const handleLogout = async () => {
+        setLoading(true);
+        await UserService.logout();
+        dispatch(resetUser());
+        setLoading(false);
+        localStorage.clear();
+    };
+
+    const content = (
+        <div>
+            <WrapperContentPopup onClick={handleLogout}>Dang xuat</WrapperContentPopup>
+            <WrapperContentPopup>Thong tin nguoi dung</WrapperContentPopup>
+        </div>
+    )
+
     return (
         <WrapperHeader>
             <Col span={5}>
@@ -24,20 +49,31 @@ const HeaderComponent = () => {
                 <ButtonInputSearch size='large' placeholder='search' textButton='Tim Kiem' backgroundColorInput='#fff' backgroundColorButton='rgb(13, 92, 182)' borderColorButton='rgb(13, 92, 182)'></ButtonInputSearch>
             </Col>
             <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center', justifyContent: 'center' }}>
-                <WrapperHeaderAccount>
-                    <UserOutlined style={{ fontSize: '30px' }} />
-                    <div onClick={handleNavigation} style={{ cursor: 'pointer' }}>
-                        <WrapperTextHeaderSmall>
-                            Dang nhap/Dang ky
-                        </WrapperTextHeaderSmall>
-                        <div style={{ display: 'flex', marginTop: '5px' }}>
-                            <WrapperTextHeaderSmall>
-                                Tai khoan
-                            </WrapperTextHeaderSmall>
-                            <CaretDownOutlined />
-                        </div>
-                    </div>
-                </WrapperHeaderAccount>
+                <Loading isLoading={loading}>
+                    <WrapperHeaderAccount>
+                        <UserOutlined style={{ fontSize: '30px' }} />
+                        {user?.email ?
+                            <>
+                                <Popover content={content}>
+                                    <div style={{ cursor: 'pointer', display: 'flex', alignItems: "center" }}>
+                                        {user.email}
+                                    </div>
+                                </Popover>
+                            </> :
+                            (<div onClick={handleNavigation} style={{ cursor: 'pointer' }}>
+                                <WrapperTextHeaderSmall>
+                                    Dang nhap/Dang ky
+                                </WrapperTextHeaderSmall>
+                                <div style={{ display: 'flex', marginTop: '5px' }}>
+                                    <WrapperTextHeaderSmall>
+                                        Tai khoan
+                                    </WrapperTextHeaderSmall>
+                                    <CaretDownOutlined />
+                                </div>
+                            </div>)
+                        }
+                    </WrapperHeaderAccount>
+                </Loading>
                 <div style={{ alignItems: 'center', gap: '5px' }}>
                     <Badge count={4} size='small'>
                         <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />

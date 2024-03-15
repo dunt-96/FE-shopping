@@ -1,7 +1,4 @@
-import React, { Fragment } from 'react'
-import { WrapperContent, WrapperLabelText, WrapperTextPrice, WrapperTextValue } from './style'
-import { type } from 'os'
-import { Checkbox, Col, Rate, Row } from 'antd'
+import { WrapperContent, WrapperLabelText, WrapperTextValue } from './style'
 
 const NavbarComponent = () => {
     const renderContent = ({ type, options }: { type: string, options: any[] }) => {
@@ -9,7 +6,7 @@ const NavbarComponent = () => {
         switch (type) {
             case 'text':
                 return options.map((option) => {
-                    return <WrapperTextValue>{option}</WrapperTextValue>
+                    return <WrapperTextValue key={option}>{option}</WrapperTextValue>
                 });
             // case 'checkbox':
             //     return (

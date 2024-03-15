@@ -1,21 +1,28 @@
 import { jwtDecode } from 'jwt-decode';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import DefaultComponent from './components/DefaultComponent/DefaultComponent';
-import { useAppDispatch } from './redux/hooks';
+import { useAppDispatch, useAppSelector } from './redux/hooks';
+import { resetUser, updateUser } from './redux/slices/userSlice';
 import routes from './routes';
+import UserService, { axiosJWT } from './services/UserService';
 import { isJsonString } from './utils';
 
 function App() {
-  // useEffect(() => {
-  //   let { decoded, storageData } = handleDecode();
 
-  //   if (decoded?.id && storageData) {
-  //     console.log('access-token', storageData);
-  //     getDetailUser(decoded.id, storageData);
-  //   }
-  // }, [])
+  const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(false)
+  const user = useAppSelector((state) => state.user)
+
+  useEffect(() => {
+    let { decoded, storageData } = handleDecode();
+
+    if (decoded?.id && storageData) {
+      console.log('access-token', storageData);
+      getDetailUser(decoded.id, storageData);
+    }
+  }, [])
 
   const handleDecode = () => {
     let storageData = localStorage.getItem('access_token');
@@ -28,33 +35,33 @@ function App() {
     return { decoded, storageData };
   }
 
-  // axiosJWT.interceptors.request.use(async function (config) {
-  //   const currentTime = new Date();
-  //   // Do something before request is sent
-  //   let { decoded } = handleDecode();
-  //   console.log('decoded', decoded);
+  axiosJWT.interceptors.request.use(async function (config) {
+    const currentTime = new Date();
+    // Do something before request is sent
+    const { decoded } = handleDecode();
+    let storageRefreshToken = localStorage.getItem('refresh_token')
+    const refreshToken = JSON.parse(storageRefreshToken ?? '')
+    const decodedRefreshToken = jwtDecode<Record<string, any>>(refreshToken)
+    if (decoded?.exp < currentTime.getTime() / 1000) {
+      if (decodedRefreshToken?.exp > currentTime.getTime() / 1000) {
+        const data = await UserService.refreshToken(refreshToken)
+        config.headers['token'] = `Bearer ${data?.access_token}`
+      } else {
+        dispatch(resetUser())
+      }
+    }
 
-  //   if (decoded?.exp < currentTime.getTime() / 1000) {
-  //     const data = await refreshToken();
-  //     // console.log('data re1211212', data);
-  //     console.log('data token', data.access_token);
-  //     config.headers['token'] = data.access_token;
-
-  //     console.log('header:', config.headers);
-  //   }
-
-  //   return config;
-  // }, function (error: any) {
-  //   // Do something with request error
-  //   return Promise.reject(error);
-  // });
+    return config;
+  }, function (error: any) {
+    // Do something with request error
+    return Promise.reject(error);
+  });
 
 
-  const dispatch = useAppDispatch();
 
   const getDetailUser = async (id: string, access_token: string) => {
-    // const res = await getDetailUserService(id, access_token);
-    // dispatch(updateUser({ ...res.data, access_token: access_token }));
+    const res = await UserService.getDetailsUser(id, access_token);
+    dispatch(updateUser({ ...res?.data, access_token: access_token }));
   }
 
   return (
