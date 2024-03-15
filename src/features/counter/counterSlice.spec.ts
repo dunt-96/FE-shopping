@@ -1,9 +1,9 @@
 import counterReducer, {
   CounterState,
-  increment,
   decrement,
+  increment,
   incrementByAmount,
-} from './counterSlice';
+} from '../../redux/slices/counterSlice';
 
 describe('counter reducer', () => {
   const initialState: CounterState = {
