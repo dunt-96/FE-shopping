@@ -3,6 +3,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import DefaultComponent from './components/DefaultComponent/DefaultComponent';
+import { Loading } from './components/Loading/Loading';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { resetUser, updateUser } from './redux/slices/userSlice';
 import routes from './routes';
@@ -16,12 +17,14 @@ function App() {
   const user = useAppSelector((state) => state.user)
 
   useEffect(() => {
+    setIsLoading(true);
     let { decoded, storageData } = handleDecode();
 
     if (decoded?.id && storageData) {
       console.log('access-token', storageData);
       getDetailUser(decoded.id, storageData);
     }
+    setIsLoading(false);
   }, [])
 
   const handleDecode = () => {
@@ -66,22 +69,22 @@ function App() {
 
   return (
     <div>
-      <Router>
-        <Routes>
-          {routes.map((route) => {
-            const Page = route.page;
-            const Layout = (route.isShowHeader ? DefaultComponent : Fragment);
-            return (
-              <Route key={route.path} path={route.path} element={
-                <Layout>
-                  <Page />
-                </Layout>} />
-            );
-          })}
-          {/* <Route path='/' element={<HomePage />}></Route>
-          <Route path='/order' element={<OrderPage />}></Route> */}
-        </Routes>
-      </Router>
+      <Loading isLoading={isLoading}>
+        <Router>
+          <Routes>
+            {routes.map((route) => {
+              const Page = route.page;
+              const Layout = (route.isShowHeader ? DefaultComponent : Fragment);
+              return (
+                <Route key={route.path} path={route.path} element={
+                  <Layout>
+                    <Page />
+                  </Layout>} />
+              );
+            })}
+          </Routes>
+        </Router>
+      </Loading>
     </div>
     // <div className="App">
     //   <header className="App-header">

@@ -9,7 +9,7 @@ export interface UserState {
     address: string,
     avatar: string,
     id: string,
-    isAdmin: false,
+    isAdmin: boolean,
     city: '',
     refreshToken: ''
 
@@ -50,6 +50,7 @@ export const userSlice = createSlice({
     reducers: {
         updateUser: (state, action) => {
             const { name = '', email = '', address = '', phone = '', avatar = '', _id = '', isAdmin, city = '' } = action.payload.data;
+            console.log('action', avatar);
             const { access_token, refreshToken } = action.payload;
             state.name = name ? name : state.name;
             state.email = email ? email : state.email;
@@ -58,7 +59,8 @@ export const userSlice = createSlice({
             state.avatar = avatar ? avatar : state.avatar;
             state.id = _id ? _id : state.id
             state.access_token = access_token ? access_token : state.access_token;
-            state.isAdmin = isAdmin ? isAdmin : state.isAdmin;
+            // state.isAdmin = isAdmin ? isAdmin : state.isAdmin;
+            state.isAdmin = true;
             state.city = city ? city : state.city;
             state.refreshToken = refreshToken ? refreshToken : state.refreshToken;
             // Redux Toolkit allows us to write "mutating" logic in reducers. It

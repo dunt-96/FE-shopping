@@ -1,3 +1,7 @@
+import {
+    UploadOutlined
+} from '@ant-design/icons';
+import { Button } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
@@ -8,7 +12,8 @@ import { useMutationHook } from '../../hooks/mutationHook';
 import { useAppDispatch } from '../../redux/hooks';
 import { updateUser, userState } from '../../redux/slices/userSlice';
 import UserService from '../../services/UserService';
-import { WrapperContentProfile, WrapperHeader, WrapperInput, WrapperLabel } from "./style";
+import { getBase64 } from '../../utils';
+import { WrapperContentProfile, WrapperHeader, WrapperInput, WrapperLabel, WrapperUploadFile } from "./style";
 
 export const ProfilePage = () => {
     const user = useSelector(userState);
@@ -23,57 +28,48 @@ export const ProfilePage = () => {
 
     const { data, isSuccess, isPending, isError } = mutation;
 
-    const [email, setEmail] = useState(user.email);
+    const [email, setEmail] = useState('');
     const handleOnchangeEmail = (e) => {
         setEmail(e.target.value);
     };
-    const handleUpdateEmail = () => { };
 
-    const [name, setName] = useState(user.name);
+    const [name, setName] = useState('');
     const handleOnchangeName = (e) => {
         setName(e.target.value);
     };
-    const handleUpdateName = (e) => {
-        setName(e.target.value);
-    };
 
-    const [phone, setPhone] = useState(user.phone);
+    const [phone, setPhone] = useState('');
     const handleOnchangePhone = (e) => {
         setPhone(e.target.value);
     };
-    const handleUpdatePhone = () => { };
 
-    const [address, setAddress] = useState(user.address);
+    const [address, setAddress] = useState('');
     const handleOnchangeAddress = (e) => {
         setAddress(e.target.value);
     };
-    const handleUpdateAddress = () => { };
 
-    const [avatar, setAvatar] = useState(user.avatar);
-    const handleOnchangeAvatar = (e) => {
-        setAvatar(e.target.value);
+    const [avatar, setAvatar] = useState('');
+
+    const handleOnchangeAvatar = async ({ fileList }) => {
+        const file = fileList[0];
+        console.log('file', file);
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+
+        setAvatar(file.url || (file.preview as string));
     };
-    const handleUpdateAvatar = () => { };
 
     const handleGetDetailsUser = async (id, token) => {
-        const storage = localStorage.getItem('refresh_token')
-        const refreshToken = JSON.parse(storage ?? '')
-        const res = await UserService.getDetailsUser(id, token)
-        dispatch(updateUser({ ...res?.data, access_token: token, refreshToken }))
+
+        const storage = localStorage.getItem('refresh_token');
+        const refreshToken = JSON.parse(storage ?? '');
+        const res = await UserService.getDetailsUser(id, token);
+        dispatch(updateUser({ ...res?.data, access_token: token, refreshToken }));
     }
 
-    useEffect(() => {
-        if (isSuccess) {
-            message.success();
-            handleGetDetailsUser(user.id, user.access_token);
-        } else if (isError) {
-            message.error();
-        }
-    }, [isSuccess, isError])
 
-
-
-    const handleUpdate = () => {
+    const handleUpdate = async () => {
         // UserService.updateUser(user.id, {
         //     name, email, phone, address, avatar
         // });
@@ -88,12 +84,22 @@ export const ProfilePage = () => {
         })
         if (isSuccess) {
             message.success();
+            console.log(isSuccess);
         } else if (isError) {
             message.error();
         }
     }
 
-    console.log('data', data);
+    useEffect(() => {
+        console.log('111');
+        if (isSuccess) {
+            message.success();
+            console.log('updata ava success');
+            handleGetDetailsUser(user.id, user.access_token);
+        } else if (isError) {
+            message.error();
+        }
+    }, [isSuccess, isError])
 
     useEffect(() => {
         setEmail(user.email);
@@ -178,7 +184,18 @@ export const ProfilePage = () => {
                     </WrapperInput>
                     <WrapperInput>
                         <WrapperLabel htmlFor='avatar'>Avatar:</WrapperLabel>
-                        <InputForm style={{ width: '300px' }} id="avatar" value={avatar} onChange={handleOnchangeAvatar} />
+                        {/* <InputForm style={{ width: '300px' }} id="avatar" value={avatar} onChange={handleOnchangeAvatar} /> */}
+                        <WrapperUploadFile maxCount={1} onChange={handleOnchangeAvatar} action="/api/user/upload-avatar">
+                            <Button icon={<UploadOutlined />}>Select file</Button>
+                        </WrapperUploadFile>
+                        {avatar && (
+                            <img src={avatar} style={{
+                                height: '60px',
+                                width: '60px',
+                                borderRadius: '50%',
+                                objectFit: 'cover'
+                            }} alt='avatar' />
+                        )}
                         <ButtonComponent
                             size={40}
                             onClick={handleUpdate}

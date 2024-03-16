@@ -22,6 +22,9 @@ const HeaderComponent = () => {
     }
     const user = useSelector(userState);
     const [loading, setLoading] = useState(false);
+    const [name, setName] = useState('');
+    const [avatar, setAvatar] = useState('');
+
 
 
 
@@ -34,8 +37,12 @@ const HeaderComponent = () => {
     };
 
     useEffect(() => {
-
-    }, [user])
+        console.log('1111');
+        setLoading(true);
+        setName(user.name);
+        setAvatar(user.avatar);
+        setLoading(false);
+    },[user])
 
     const content = (
         <div>
@@ -57,12 +64,21 @@ const HeaderComponent = () => {
             <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center', justifyContent: 'center' }}>
                 <Loading isLoading={loading}>
                     <WrapperHeaderAccount>
-                        <UserOutlined style={{ fontSize: '30px' }} />
+                        {avatar ? (
+                            <img src={avatar} width='50px' height='50px' style={{
+                                height: '40px',
+                                width: '40px',
+                                borderRadius: '50%',
+                                objectFit: 'cover'
+                            }} alt='avatar'></img>
+                        ) :
+                            <UserOutlined style={{ fontSize: '30px' }} />
+                        }
                         {user?.access_token ?
                             <>
                                 <Popover content={content}>
                                     <div style={{ cursor: 'pointer', display: 'flex', alignItems: "center" }}>
-                                        {user.name ?? user.email}
+                                        {name}
                                     </div>
                                 </Popover>
                             </> :

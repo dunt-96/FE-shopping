@@ -20,7 +20,7 @@ export const WrapperReportText = styled.div`
     display: flex;
     font-size: 11px;
     color: rgb(128, 128, 137);
-    align-items: center
+    align-items: center;
 `
 export const WrapperPriceText = styled.div`
     font-size: 16px;
