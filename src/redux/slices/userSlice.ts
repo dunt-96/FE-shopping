@@ -49,11 +49,18 @@ export const userSlice = createSlice({
     // The `reducers` field lets us define reducers and generate associated actions
     reducers: {
         updateUser: (state, action) => {
-            console.log('action', action);
-            const { name = '', email, access_token } = action.payload.data;
-            state.name = name;
-            state.email = email;
-            state.access_token = access_token;
+            const { name = '', email = '', address = '', phone = '', avatar = '', _id = '', isAdmin, city = '' } = action.payload.data;
+            const { access_token, refreshToken } = action.payload;
+            state.name = name ? name : state.name;
+            state.email = email ? email : state.email;
+            state.address = address ? address : state.address;
+            state.phone = phone ? phone : state.phone;
+            state.avatar = avatar ? avatar : state.avatar;
+            state.id = _id ? _id : state.id
+            state.access_token = access_token ? access_token : state.access_token;
+            state.isAdmin = isAdmin ? isAdmin : state.isAdmin;
+            state.city = city ? city : state.city;
+            state.refreshToken = refreshToken ? refreshToken : state.refreshToken;
             // Redux Toolkit allows us to write "mutating" logic in reducers. It
             // doesn't actually mutate the state because it uses the Immer library,
             // which detects changes to a "draft state" and produces a brand new

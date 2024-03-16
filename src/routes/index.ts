@@ -3,6 +3,7 @@ import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 import OrderPage from "../pages/OrderPage/OrderPage";
 import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 import ProductPage from "../pages/ProductsPage/ProductPage";
+import { ProfilePage } from "../pages/Profile/ProfilePage";
 import SignInPage from "../pages/SignInPage/SignInPage";
 import SignUpPage from "../pages/SignUpPage/SignUpPage";
 import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
@@ -10,42 +11,47 @@ import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
 const routes = [
     {
         path: '/',
-        page: HomePage ,
+        page: HomePage,
         isShowHeader: true,
     },
     {
         path: '/order',
-        page: OrderPage ,
+        page: OrderPage,
         isShowHeader: true,
     },
     {
         path: '/products',
-        page: ProductPage ,
+        page: ProductPage,
         isShowHeader: true,
     },
     {
         path: '/product/:type',
-        page: TypeProductPage ,
+        page: TypeProductPage,
         isShowHeader: true,
     },
     {
         path: '/sign-in',
-        page: SignInPage ,
+        page: SignInPage,
         isShowHeader: false,
     },
     {
         path: '/sign-up',
-        page: SignUpPage ,
+        page: SignUpPage,
         isShowHeader: false,
     },
     {
         path: '/product-detail',
-        page: ProductDetailPage ,
+        page: ProductDetailPage,
+        isShowHeader: true,
+    },
+    {
+        path: '/profile-user',
+        page: ProfilePage,
         isShowHeader: true,
     },
     {
         path: '*',
-        page: NotFoundPage 
+        page: NotFoundPage
     },
 ]
 

@@ -49,11 +49,21 @@ export const logout = async () => {
     return res.data
 }
 
+export const updateUser = async (userId, data, access_token) => {
+    const res = await axiosJWT.put(`${process.env.REACT_APP_API_URL}/user/update-user/${userId}`, data, {
+        headers: {
+            token: `Bearer ${access_token}`,
+        }
+    })
+    return res.data
+}
+
 
 export default {
     loginUser,
     getDetailsUser,
     signUp,
     refreshToken,
-    logout
+    logout,
+    updateUser
 };

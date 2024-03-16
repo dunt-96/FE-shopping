@@ -40,11 +40,8 @@ const SignInPage = () => {
       localStorage.setItem('access_token', JSON.stringify(data?.data.access_token))
       localStorage.setItem('refresh_token', JSON.stringify(data?.data.refresh_token))
       if (data?.data.access_token ?? '') {
-        console.log('1111111', data.data.access_token);
         const decoded = jwtDecode<Record<string, any>>(data?.data.access_token);
         if (decoded?.id) {
-          console.log('2222222', data.data.access_token);
-          console.log('2222222', decoded.id);
           handleGetDetailsUser(decoded?.id, data?.data.access_token)
         }
       }
@@ -77,8 +74,6 @@ const SignInPage = () => {
         email: email,
         password: password,
       })
-
-      console.log('data login', data);
     } catch (error) {
       console.log(error);
     }

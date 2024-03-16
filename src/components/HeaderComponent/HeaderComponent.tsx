@@ -4,7 +4,7 @@ import {
     UserOutlined
 } from '@ant-design/icons';
 import { Badge, Col, Popover } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../redux/hooks';
@@ -23,6 +23,8 @@ const HeaderComponent = () => {
     const user = useSelector(userState);
     const [loading, setLoading] = useState(false);
 
+
+
     const handleLogout = async () => {
         setLoading(true);
         await UserService.logout();
@@ -31,10 +33,14 @@ const HeaderComponent = () => {
         localStorage.clear();
     };
 
+    useEffect(() => {
+
+    }, [user])
+
     const content = (
         <div>
             <WrapperContentPopup onClick={handleLogout}>Dang xuat</WrapperContentPopup>
-            <WrapperContentPopup>Thong tin nguoi dung</WrapperContentPopup>
+            <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thong tin nguoi dung</WrapperContentPopup>
         </div>
     )
 
@@ -52,11 +58,11 @@ const HeaderComponent = () => {
                 <Loading isLoading={loading}>
                     <WrapperHeaderAccount>
                         <UserOutlined style={{ fontSize: '30px' }} />
-                        {user?.email ?
+                        {user?.access_token ?
                             <>
                                 <Popover content={content}>
                                     <div style={{ cursor: 'pointer', display: 'flex', alignItems: "center" }}>
-                                        {user.email}
+                                        {user.name ?? user.email}
                                     </div>
                                 </Popover>
                             </> :
