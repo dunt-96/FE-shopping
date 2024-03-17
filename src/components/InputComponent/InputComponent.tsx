@@ -1,13 +1,14 @@
-import { Input } from 'antd'
-import React from 'react'
+import { Input } from 'antd';
 
 const InputComponent = (props: any) => {
-    const { size, placeholder, backgroundInputColor } = props;
+    const { size, placeholder, backgroundInputColor, style, bordered, ...rest } = props;
     return (
         <Input
             size={size}
             placeholder={placeholder}
-            style={{ backgroundColor: backgroundInputColor, borderRadius: '5px 0 0 5px' }}
+            borderless={bordered}
+            style={style}
+            {...rest}
         />
     )
 }

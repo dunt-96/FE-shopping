@@ -14,7 +14,9 @@ import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 import { Loading } from '../Loading/Loading';
 import { WrapperContentPopup, WrapperHeader, WrapperHeaderAccount, WrapperTextHeader, WrapperTextHeaderSmall } from './style';
 
-const HeaderComponent = () => {
+const HeaderComponent = (props) => {
+    const { isHiddenSearch = false, isHiddenCart = false } = props;
+
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const handleNavigation = () => {
@@ -42,25 +44,30 @@ const HeaderComponent = () => {
         setName(user.name);
         setAvatar(user.avatar);
         setLoading(false);
-    },[user])
+    }, [user])
 
     const content = (
         <div>
             <WrapperContentPopup onClick={handleLogout}>Dang xuat</WrapperContentPopup>
+            {user.isAdmin && <WrapperContentPopup onClick={() => navigate('/system/admin')}>Quan ly he thong</WrapperContentPopup>}
             <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thong tin nguoi dung</WrapperContentPopup>
         </div>
     )
 
     return (
-        <WrapperHeader>
+        <WrapperHeader style={{ justifyContent: (isHiddenSearch && isHiddenCart) && 'space-between' }}>
             <Col span={5}>
                 <WrapperTextHeader>
                     NguyenThanhDu
                 </WrapperTextHeader>
             </Col>
-            <Col span={13}>
-                <ButtonInputSearch size='large' placeholder='search' textButton='Tim Kiem' backgroundColorInput='#fff' backgroundColorButton='rgb(13, 92, 182)' borderColorButton='rgb(13, 92, 182)'></ButtonInputSearch>
-            </Col>
+            {!isHiddenSearch &&
+                (
+                    <Col span={13}>
+                        <ButtonInputSearch size='large' placeholder='search' textButton='Tim Kiem' backgroundColorInput='#fff' backgroundColorButton='rgb(13, 92, 182)' borderColorButton='rgb(13, 92, 182)'></ButtonInputSearch>
+                    </Col>
+                )
+            }
             <Col span={6} style={{ display: 'flex', gap: '54px', alignItems: 'center', justifyContent: 'center' }}>
                 <Loading isLoading={loading}>
                     <WrapperHeaderAccount>
@@ -96,12 +103,16 @@ const HeaderComponent = () => {
                         }
                     </WrapperHeaderAccount>
                 </Loading>
-                <div style={{ alignItems: 'center', gap: '5px' }}>
-                    <Badge count={4} size='small'>
-                        <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
-                    </Badge>
-                    <WrapperTextHeaderSmall>Gio hang</WrapperTextHeaderSmall>
-                </div>
+                {!isHiddenCart &&
+                    (
+                        <div style={{ alignItems: 'center', gap: '5px' }}>
+                            <Badge count={4} size='small'>
+                                <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
+                            </Badge>
+                            <WrapperTextHeaderSmall>Gio hang</WrapperTextHeaderSmall>
+                        </div>
+                    )
+                }
             </Col>
         </WrapperHeader>
     )
