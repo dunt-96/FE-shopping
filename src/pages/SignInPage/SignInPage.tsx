@@ -50,6 +50,7 @@ const SignInPage = () => {
   }, [isSuccess])
 
   const handleGetDetailsUser = async (id, token) => {
+    console.log('1111111111', token);
     const storage = localStorage.getItem('refresh_token')
     const refreshToken = JSON.parse(storage ?? '')
     const res = await UserService.getDetailsUser(id, token)

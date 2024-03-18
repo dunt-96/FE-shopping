@@ -11,7 +11,8 @@ export interface UserState {
     id: string,
     isAdmin: boolean,
     city: '',
-    refreshToken: ''
+    refreshToken: '',
+    currentUserId: string
 
 }
 
@@ -25,8 +26,8 @@ const initialState: UserState = {
     id: '',
     isAdmin: false,
     city: '',
-    refreshToken: ''
-
+    refreshToken: '',
+    currentUserId: ''
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -49,8 +50,8 @@ export const userSlice = createSlice({
     // The `reducers` field lets us define reducers and generate associated actions
     reducers: {
         updateUser: (state, action) => {
+            console.log('acction', action.payload.data);
             const { name = '', email = '', address = '', phone = '', avatar = '', _id = '', isAdmin, city = '' } = action.payload.data;
-            console.log('action', avatar);
             const { access_token, refreshToken } = action.payload;
             state.name = name ? name : state.name;
             state.email = email ? email : state.email;
@@ -80,6 +81,11 @@ export const userSlice = createSlice({
             state.city = '';
             state.refreshToken = ''
 
+        },
+        updateCurrentUserId: (state, action) => {
+            const { currentUserId } = action.payload;
+
+            state.currentUserId = currentUserId;
         }
     },
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -99,7 +105,7 @@ export const userSlice = createSlice({
     // },
 });
 
-export const { updateUser, resetUser } = userSlice.actions;
+export const { updateUser, resetUser, updateCurrentUserId } = userSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

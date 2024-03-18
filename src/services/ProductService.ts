@@ -27,6 +27,7 @@ const getDetailProduct = async (id) => {
         console.log(error);
     }
 }
+
 const updateProduct = async (productId, data, access_token) => {
     console.log('id', productId, data)
     try {
@@ -41,9 +42,23 @@ const updateProduct = async (productId, data, access_token) => {
     }
 }
 
+const deleteProduct = async (productId, access_token) => {
+    try {
+        const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL}/product/delete/${productId}`, {
+            headers: {
+                token: `Bearer ${access_token}`
+            }
+        });
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export default {
     getAllProduct,
     createProduct,
     getDetailProduct,
-    updateProduct
+    updateProduct,
+    deleteProduct
 }

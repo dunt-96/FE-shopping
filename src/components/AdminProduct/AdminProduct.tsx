@@ -1,14 +1,20 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Form, Modal } from "antd";
-import { useEffect, useState } from 'react';
+import { Button, Form, InputRef, Space } from "antd";
+import { FilterDropdownProps } from 'antd/es/table/interface';
+import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import * as message from '../../components/Message/Message';
 import { useMutationHook } from '../../hooks/mutationHook';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { productState, updateCurrentIdProduct } from '../../redux/slices/productSlice';
+import { userState } from '../../redux/slices/userSlice';
 import ProductService from '../../services/ProductService';
 import { getBase64 } from '../../utils';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
 import InputComponent from '../InputComponent/InputComponent';
 import { Loading } from '../Loading/Loading';
+import ModelComponent from '../ModelComponent/ModelComponent';
 import TableComponent from '../TableComponent/TableComponent';
 import { WrapperFormItem, WrapperHeader, WrapperUploadFile } from "./style";
 
@@ -19,7 +25,16 @@ type FieldType = {
 };
 
 const AdminProduct = () => {
+    const product = useAppSelector((productState));
+    const dispatch = useAppDispatch()
+    const user = useSelector(userState);
+
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef<InputRef>(null);
+
     const [rowSelected, setRowSelected] = useState('');
+
     const fetchAllProduct = async () => {
         const res = await ProductService.getAllProduct();
 
@@ -56,13 +71,26 @@ const AdminProduct = () => {
         },
     )
 
+    const mutationDeleteProduct = useMutationHook((
+        async (data) => {
+            const { productId, access_token } = data;
+            const res = await ProductService.deleteProduct(productId, access_token);
+
+            console.log('delete res', res);
+
+            return res;
+        }
+    ))
+
 
     const { data, isSuccess, isPending, isError } = mutation;
-    const { data: dataUpdated, isPending: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
+    const { data: dataUpdated, isPending: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate;
+    const { data: deleteData, isPending: isPendingDeleteProd, isSuccess: isSuccessDeleteProd, isError: isErrorDeleteProd } = mutationDeleteProduct;
     const [form] = Form.useForm();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+    const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
     const initial = () => ({
         name: '',
         price: '',
@@ -115,9 +143,10 @@ const AdminProduct = () => {
     useEffect(() => {
         if (isSuccess && data.status === "OK") {
             // setIsModalOpen(false);
-            handleCancel()
             message.success();
-            form.resetFields();
+            queryProduct.refetch();
+            // form.resetFields();
+            handleCancel()
         } else if (isError) {
             message.error();
         }
@@ -126,10 +155,31 @@ const AdminProduct = () => {
 
     const handleCancel = () => {
         setIsModalOpen(false);
+        setStateProduct(initial());
+        form.resetFields()
     };
 
-    const onFinish = async (values) => {
+    const handleCancelDeleteModal = () => {
+        setIsModalOpenDelete(false);
+    };
 
+
+
+    const onFinish = async (values) => {
+        console.log('state', stateProduct);
+        await mutation.mutateAsync(stateProduct);
+        // const params = {
+        //     name: stateProduct.name,
+        //     type: stateProduct.type,
+        //     price: stateProduct.price,
+        //     description: stateProduct.description,
+        //     rating: stateProduct.rating,
+        //     image: stateProduct.image,
+        //     countInStock: stateProduct.countInStock,
+        //     discount: stateProduct.discount
+        // }
+
+        // mutation.mutate({ params });
     };
 
     const handleOnchange = (e) => {
@@ -159,11 +209,9 @@ const AdminProduct = () => {
     };
 
     const handleDetailsProduct = async () => {
-        if (rowSelected) {
-            setIsLoadingUpdate(true);
-            await getDetailProduct(rowSelected);
-            showDrawer();
-        }
+        setIsLoadingUpdate(true);
+        showDrawer();
+
     }
 
     const handleCloseDrawer = () => {
@@ -190,15 +238,25 @@ const AdminProduct = () => {
         }
     }, [isSuccessUpdated])
 
+    useEffect(() => {
+        if (isSuccessDeleteProd && deleteData?.status === 'OK') {
+            message.success()
+            refreshListDataProduct();
+            setIsModalOpenDelete(false);
+        } else if (isErrorUpdated) {
+            message.error()
+        }
+    }, [isSuccessDeleteProd])
+
 
     const onUpdateProduct = async () => {
         setIsLoadingUpdate(true);
         const access_token = localStorage.getItem('access_token');
         await ProductService.updateProduct(rowSelected, stateProductDetail, access_token);
         console.log('onFinish update', stateProductDetail);
+        refreshListDataProduct();
         setIsLoadingUpdate(false);
         onClose();
-        refreshListDataProduct();
 
         // if (rowSelected) {
         //     mutationUpdate.mutate({
@@ -215,8 +273,7 @@ const AdminProduct = () => {
     }
 
     const refreshListDataProduct = async () => {
-        const res = await queryProduct.refetch();
-        console.log('refresh', res);
+        await queryProduct.refetch();
     }
 
     useEffect(() => {
@@ -247,63 +304,171 @@ const AdminProduct = () => {
         setIsLoadingUpdate(false);
     }
 
+    const handleDeleteProduct = () => {
+        console.log('token from user', user.access_token);
+        console.log('product id', rowSelected);
+        mutationDeleteProduct.mutate({
+            productId: rowSelected,
+            access_token: user.access_token
+        },
+            // {
+            //     onSettled: () => {
+            //         queryProduct.refetch();
+            //     }
+            // },
+        )
+    }
+
     const renderAction = () => {
         return (
             <div style={{ gap: '10px' }}>
-                <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} />
+                <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
                 <EditOutlined style={{ color: 'orange', fontSize: '30px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
             </div>
         )
     }
 
+    const handleSearch = (
+        selectedKeys: string[],
+        confirm: FilterDropdownProps['confirm'],
+        dataIndex,
+    ) => {
+        console.log('selected key', selectedKeys, confirm, dataIndex);
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+
+    const handleReset = (clearFilters: () => void) => {
+        clearFilters();
+        setSearchText('');
+    };
+
+    const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+            <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+                <InputComponent
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+                    style={{ marginBottom: 8, display: 'block' }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() => clearFilters && handleReset(clearFilters)}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Reset
+                    </Button>
+                    {/* <Button
+                        type="link"
+                        size="small"
+                        onClick={() => {
+                            confirm({ closeDropdown: false });
+                            setSearchText((selectedKeys as string[])[0]);
+                            setSearchedColumn(dataIndex);
+                        }}
+                    >
+                        Filter
+                    </Button> */}
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={() => {
+                            close();
+                        }}
+                    >
+                        close
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered: boolean) => (
+            <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
+        ),
+        onFilter: (value, record) =>
+            record[dataIndex]
+                .toString()
+                .toLowerCase()
+                .includes((value as string).toLowerCase()),
+        onFilterDropdownOpenChange: (visible) => {
+            if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
+            }
+        },
+        // render: (text) =>
+        //     searchedColumn === dataIndex ? (
+        //         <Highlighter
+        //             highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+        //             searchWords={[searchText]}
+        //             autoEscape
+        //             textToHighlight={text ? text.toString() : ''}
+        //         />
+        //     ) : (
+        //         text
+        //     ),
+    });
+
     const columns = [
         {
             title: 'Name',
             dataIndex: 'name',
-            // sorter: (a, b) => a.name.length - b.name.length,
-            // ...getColumnSearchProps('name')
+            sorter: (a, b) => a.name.length - b.name.length,
+            ...getColumnSearchProps('name')
         },
         {
             title: 'Price',
             dataIndex: 'price',
-            // sorter: (a, b) => a.price - b.price,
-            // filters: [
-            //     {
-            //         text: '>= 50',
-            //         value: '>=',
-            //     },
-            //     {
-            //         text: '<= 50',
-            //         value: '<=',
-            //     }
-            // ],
-            // onFilter: (value, record) => {
-            //     if (value === '>=') {
-            //         return record.price >= 50
-            //     }
-            //     return record.price <= 50
-            // },
+            sorter: (a, b) => a.price - b.price,
+            filters: [
+                {
+                    text: '>= 50',
+                    value: '>=',
+                },
+                {
+                    text: '<= 50',
+                    value: '<=',
+                }
+            ],
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return record.price >= 50
+                }
+                return record.price <= 50
+            },
         },
         {
             title: 'Rating',
             dataIndex: 'rating',
-            // sorter: (a, b) => a.rating - b.rating,
-            // filters: [
-            //     {
-            //         text: '>= 3',
-            //         value: '>=',
-            //     },
-            //     {
-            //         text: '<= 3',
-            //         value: '<=',
-            //     }
-            // ],
-            // onFilter: (value, record) => {
-            //     if (value === '>=') {
-            //         return Number(record.rating) >= 3
-            //     }
-            //     return Number(record.rating) <= 3
-            // },
+            sorter: (a, b) => a.rating - b.rating,
+            filters: [
+                {
+                    text: '>= 3',
+                    value: '>=',
+                },
+                {
+                    text: '<= 3',
+                    value: '<=',
+                }
+            ],
+            onFilter: (value, record) => {
+                if (value === '>=') {
+                    return Number(record.rating) >= 3
+                }
+                return Number(record.rating) <= 3
+            },
         },
         {
             title: 'Type',
@@ -331,12 +496,14 @@ const AdminProduct = () => {
                 <TableComponent selectionType={'checkbox'} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
                     return {
                         onClick: event => {
+                            console.log('on click row', record._id);
                             setRowSelected(record._id);
+                            dispatch(updateCurrentIdProduct({ currentIdProduct: record._id }))
                         }
                     }
                 }} />
             </div>
-            <Modal title="Tạo sản phẩm" open={isModalOpen} footer={null} onOk={handleOk} onCancel={handleCancel}  >
+            <ModelComponent title="Tạo sản phẩm" forceRender open={isModalOpen} footer={null} onOk={handleOk} onCancel={handleCancel}  >
                 <Loading isLoading={isPending}>
                     <Form
                         name="basic"
@@ -396,7 +563,7 @@ const AdminProduct = () => {
                             name="image"
                             rules={[{ required: true, message: 'Please input your image!' }]}
                         >
-                            <WrapperUploadFile maxCount={1} onChange={handleOnchangeAvatar} action="/api/user/upload-avatar">
+                            <WrapperUploadFile maxCount={1} accept="image/*" onChange={handleOnchangeAvatar} action="/api/user/upload-avatar">
                                 <Button icon={<UploadOutlined />}>Image:</Button>
                                 {stateProduct.image && (
                                     <img src={stateProduct.image} style={{
@@ -416,11 +583,11 @@ const AdminProduct = () => {
                         </Form.Item>
                     </Form>
                 </Loading>
-            </Modal>
+            </ModelComponent>
             <DrawerComponent open={open} onClose={onClose} title="Chi tiết sản phẩm" width="500px">
                 <Loading isLoading={isLoadingUpdate}>
                     <Form
-                        name="basic"
+                        name="update form"
                         form={form}
                         labelCol={{ span: 6 }}
                         wrapperCol={{ span: 18 }}
@@ -498,6 +665,11 @@ const AdminProduct = () => {
                     </Form>
                 </Loading>
             </DrawerComponent>
+            <ModelComponent forceRender title="Xoá sản phẩm" open={isModalOpenDelete} onOk={handleDeleteProduct} onCancel={handleCancelDeleteModal}  >
+                <Loading isLoading={isPendingDeleteProd}>
+                    <div>Bạn có chắc muốn xoá sản phẩm này không ?</div>
+                </Loading>
+            </ModelComponent>
         </div>
     )
 }
