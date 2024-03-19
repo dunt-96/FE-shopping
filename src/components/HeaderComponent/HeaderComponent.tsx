@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../redux/hooks';
+import { onSearchReducer } from '../../redux/slices/productSlice';
 import { resetUser, userState } from '../../redux/slices/userSlice';
 import UserService from '../../services/UserService';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
@@ -22,13 +23,13 @@ const HeaderComponent = (props) => {
     const handleNavigation = () => {
         navigate('/sign-in')
     }
+    const handleNavigateToHomePage = () => {
+        navigate('/');
+    }
     const user = useSelector(userState);
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
     const [avatar, setAvatar] = useState('');
-
-
-
 
     const handleLogout = async () => {
         setLoading(true);
@@ -46,6 +47,11 @@ const HeaderComponent = (props) => {
         setLoading(false);
     }, [user])
 
+    const onSearch = (e) => {
+        console.log('search', e.target.value);
+        dispatch(onSearchReducer(e.target.value));
+    }
+
     const content = (
         <div>
             <WrapperContentPopup onClick={handleLogout}>Dang xuat</WrapperContentPopup>
@@ -57,14 +63,21 @@ const HeaderComponent = (props) => {
     return (
         <WrapperHeader style={{ justifyContent: (isHiddenSearch && isHiddenCart) && 'space-between' }}>
             <Col span={5}>
-                <WrapperTextHeader>
+                <WrapperTextHeader onClick={handleNavigateToHomePage} style={{ cursor: 'pointer' }}>
                     NguyenThanhDu
                 </WrapperTextHeader>
             </Col>
             {!isHiddenSearch &&
                 (
                     <Col span={13}>
-                        <ButtonInputSearch size='large' placeholder='search' textButton='Tim Kiem' backgroundColorInput='#fff' backgroundColorButton='rgb(13, 92, 182)' borderColorButton='rgb(13, 92, 182)'></ButtonInputSearch>
+                        <ButtonInputSearch
+                            size='large'
+                            placeholder='search'
+                            textButton='Tim Kiem'
+                            onChange={onSearch}
+                        >
+
+                        </ButtonInputSearch>
                     </Col>
                 )
             }

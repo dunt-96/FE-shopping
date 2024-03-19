@@ -3,10 +3,12 @@ import { RootState } from "../store";
 
 export interface ProductState {
     currentIdProduct: string;
+    searchString: string;
 }
 
 const initialState: ProductState = {
-    currentIdProduct: ''
+    currentIdProduct: '',
+    searchString: ''
 }
 
 export const productSlice = createSlice({
@@ -18,12 +20,15 @@ export const productSlice = createSlice({
             console.log('currentIdProduct', currentIdProduct);
 
             state.currentIdProduct = currentIdProduct;
+        },
+        onSearchReducer: (state, action) => {
+            state.searchString = action.payload;
         }
     }
 })
 
 
-export const { updateCurrentIdProduct } = productSlice.actions;
+export const { updateCurrentIdProduct, onSearchReducer } = productSlice.actions;
 
 export const productState = (state: RootState) => state.product;
 

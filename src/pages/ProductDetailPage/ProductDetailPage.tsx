@@ -4,7 +4,7 @@ import ProductDetailComponent from '../../components/ProductDetailComponent/Prod
 const ProductDetailPage = () => {
     return (
         <div style={{ padding: '0 120px', background: '#efefef' }}>
-            <h4>Trang Chu</h4>
+            <h4>Trang ProductDetailPage</h4>
             <ProductDetailComponent></ProductDetailComponent>
         </div>
 

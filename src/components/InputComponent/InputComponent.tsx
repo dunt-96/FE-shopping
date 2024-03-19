@@ -1,7 +1,7 @@
 import { Input } from 'antd';
 
 const InputComponent = (props: any) => {
-    const { size, placeholder, backgroundInputColor, style, bordered, ...rest } = props;
+    const { size, placeholder, style, bordered, ...rest } = props;
     return (
         <Input
             size={size}

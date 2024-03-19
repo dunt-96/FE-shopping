@@ -38,7 +38,7 @@ const AdminProduct = () => {
     const [listIdsDelete, setListIdsDelete] = useState([]);
 
     const fetchAllProduct = async () => {
-        const res = await ProductService.getAllProduct();
+        const res = await ProductService.getAllProduct('');
 
         return res?.data;
     }
@@ -591,6 +591,13 @@ const AdminProduct = () => {
                             <InputComponent value={stateProduct.price} onChange={handleOnchange} name="price" />
                         </Form.Item>
                         <Form.Item
+                            label="Discount"
+                            name="discount"
+                            rules={[{ required: true, message: 'Please input your discount!' }]}
+                        >
+                            <InputComponent value={stateProduct.discount} onChange={handleOnchange} name="discount" />
+                        </Form.Item>
+                        <Form.Item
                             label="Rating"
                             name="rating"
                             rules={[{ required: true, message: 'Please input your rating!' }]}
@@ -670,6 +677,13 @@ const AdminProduct = () => {
                             rules={[{ required: true, message: 'Please input your price!' }]}
                         >
                             <InputComponent value={stateProductDetail.price} onChange={handleOnchangeDetail} name="price" />
+                        </Form.Item>
+                        <Form.Item
+                            label="Discount"
+                            name="discount"
+                            rules={[{ required: true, message: 'Please input your discount!' }]}
+                        >
+                            <InputComponent value={stateProductDetail.discount} onChange={handleOnchangeDetail} name="discount" />
                         </Form.Item>
                         <Form.Item
                             label="Rating"
