@@ -10,6 +10,7 @@ const CardComponent = (props) => {
   const navigate = useNavigate();
 
   const {
+    key,
     countInStock,
     description,
     image,
@@ -18,11 +19,12 @@ const CardComponent = (props) => {
     rating,
     type,
     discount,
-    selled
+    selled,
+    id
   } = props;
 
-  const handleDetailProduct = () => {
-    navigate('/product-detail');
+  const handleDetailProduct = (id) => {
+    navigate(`/product-detail/${id}`);
   }
 
   return (
@@ -31,7 +33,7 @@ const CardComponent = (props) => {
       style={{ width: 240 }}
       styles={{ body: { padding: '10px' }, header: { width: '200px', height: '200px' } }}
       cover={<img alt="example" src={image}
-        onClick={handleDetailProduct}
+        onClick={() => handleDetailProduct(id)}
       />}
     >
       <Image src={logoOfficial} style={{ width: '89px', height: '20px', marginBottom: '10px' }} />

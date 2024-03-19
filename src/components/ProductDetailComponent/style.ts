@@ -63,12 +63,16 @@ export const WrapperQualityProduct = styled.h1`
     align-item: center;
     width: 100px;
     margin-top: 10px;
-    
 `
 export const WrapperBtnQualityProduct = styled.span`
 `
 export const WrapperInputNumber = styled(InputNumber)`
-    width: 40px;
+    width: 50px;
     text-align: center;
+    align-content:center;
+    overflow-wrap: break-word;
     justify-content: center;
+    & .ant-input-number-handler-wrap {
+        display: none;
+    }
 `
