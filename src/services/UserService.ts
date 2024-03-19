@@ -80,6 +80,20 @@ const deleteUser = async (userId, access_token) => {
     }
 }
 
+const deleteManyUsers = async (ids: [], access_token: string) => {
+    try {
+        const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL}/user/delete-many`, {
+            data: ids,
+            headers: {
+                token: `Bearer ${access_token}`
+            }
+        });
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 export default {
     loginUser,
@@ -89,5 +103,6 @@ export default {
     logout,
     updateUser,
     deleteUser,
-    getAllUser
+    getAllUser,
+    deleteManyUsers
 };

@@ -12,7 +12,7 @@ import { getBase64 } from '../../utils';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
 import InputComponent from '../InputComponent/InputComponent';
 import { Loading } from '../Loading/Loading';
-import ModelComponent from '../ModelComponent/ModelComponent';
+import ModelComponent from '../ModelComponet/ModelComponent';
 import TableComponent from '../TableComponent/TableComponent';
 import { WrapperFormItem, WrapperHeader, WrapperUploadFile } from "./style";
 
@@ -24,6 +24,8 @@ const AdminUser = () => {
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef<InputRef>(null);
     const [rowSelected, setRowSelected] = useState('');
+    const [isDeleteManyUser, setIsDeleteManyUser] = useState(false);
+    const [listIdsDelete, setListIdsDelete] = useState([]);
 
     const fetchAllUser = async () => {
         const res = await UserService.getAllUser();
@@ -49,6 +51,15 @@ const AdminUser = () => {
         },
     )
 
+    const mutationDeleteManyUser = useMutationHook(
+        async (data) => {
+            const { ids, access_token } = data;
+            const res = await UserService.deleteManyUsers(ids, access_token);
+
+            return res;
+        }
+    );
+
     const mutationCreateUser = useMutationHook(
         async (data) => {
             const res = await UserService.signUp(data);
@@ -70,7 +81,8 @@ const AdminUser = () => {
 
     const { data, isSuccess, isPending, isError } = mutationCreateUser;
     const { data: dataUpdated, isPending: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdateUser;
-    const { data: deleteData, isPending: isPendingDeleteProd, isSuccess: isSuccessDeleteProd, isError: isErrorDeleteProd } = mutationDeleteUser;
+    const { data: deleteManyData, isPending: isPendingDeleteMany, isSuccess: isSuccessDeleteMany, isError: isErrorDeleteMany } = mutationDeleteManyUser;
+    const { data: deleteData, isPending: isPendingDeleteUser, isSuccess: isSuccessDeleteUser, isError: isErrorDeleteUser } = mutationDeleteUser;
     const [form] = Form.useForm();
     const [formUserDetail] = Form.useForm();
 
@@ -229,14 +241,34 @@ const AdminUser = () => {
     }, [isSuccessUpdated])
 
     useEffect(() => {
-        if (isSuccessDeleteProd && deleteData?.status === 'OK') {
+        if (isSuccessDeleteUser && deleteData?.status === 'OK') {
             message.success()
             refreshListDataProduct();
             setIsModalOpenDelete(false);
         } else if (isErrorUpdated) {
             message.error()
         }
-    }, [isSuccessDeleteProd])
+    }, [isSuccessDeleteUser])
+
+    const handleDeleteAll = (ids) => {
+        setIsDeleteManyUser(true);
+        setListIdsDelete(ids);
+        handleClickDelete();
+    }
+
+    const handleClickDelete = () => {
+        setIsModalOpenDelete(true);
+    }
+
+    useEffect(() => {
+        if (isSuccessDeleteMany && deleteManyData?.status === 'OK') {
+            message.success()
+            refreshListDataProduct();
+            setIsModalOpenDelete(false);
+        } else if (isErrorUpdated) {
+            message.error()
+        }
+    }, [isSuccessDeleteMany])
 
 
     const onUpdateUser = async () => {
@@ -298,6 +330,21 @@ const AdminUser = () => {
         setIsLoadingUpdate(false);
     }
 
+    const handleDeleteManyUser = () => {
+        console.log('list id delete 11111', listIdsDelete);
+        // handleClickDelete();
+        // setIsDeleteManyProduct(true);
+        // console.log('ids', ids);
+        mutationDeleteManyUser.mutate({
+            ids: listIdsDelete,
+            access_token: user.access_token
+        })
+    }
+
+    const handleClickOkDeleteUser = () => {
+        return isDeleteManyUser ? handleDeleteManyUser() : handleDeleteUser();
+    }
+
     const handleDeleteUser = () => {
         console.log('token from user', user.access_token);
         console.log('product id', rowSelected);
@@ -316,7 +363,7 @@ const AdminUser = () => {
     const renderAction = () => {
         return (
             <div style={{ gap: '10px' }}>
-                <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
+                <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={handleClickDelete} />
                 <EditOutlined style={{ color: 'orange', fontSize: '30px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
             </div>
         )
@@ -473,7 +520,7 @@ const AdminUser = () => {
                 </Button>
             </div>
             <div style={{ marginTop: '20px' }}>
-                <TableComponent selectionType={'checkbox'} columns={columns} isLoading={isLoading} data={dataTable} onRow={(record, rowIndex) => {
+                <TableComponent handleDeleteMany={handleDeleteAll} selectionType={'checkbox'} columns={columns} isLoading={isLoading} data={dataTable} onRow={(record, rowIndex) => {
                     return {
                         onClick: event => {
                             console.log('on click row', record._id);
@@ -646,9 +693,9 @@ const AdminUser = () => {
                     </Form>
                 </Loading>
             </DrawerComponent>
-            <ModelComponent forceRender title="Xoá tài khoản" open={isModalOpenDelete} onOk={handleDeleteUser} onCancel={handleCancelDeleteModal}  >
-                <Loading isLoading={isPendingDeleteProd}>
-                    <div>Bạn có chắc muốn xoá tài khoản này không ?</div>
+            <ModelComponent forceRender title="Xoá tài khoản" open={isModalOpenDelete} onOk={handleClickOkDeleteUser} onCancel={handleCancelDeleteModal}  >
+                <Loading isLoading={isDeleteManyUser ? isPendingDeleteMany : isPendingDeleteUser}>
+                    <div>Bạn có chắc muốn xoá {isDeleteManyUser ? "những" : ''} tài khoản này không ?</div>
                 </Loading>
             </ModelComponent>
         </div>

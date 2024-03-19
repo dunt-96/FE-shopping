@@ -55,10 +55,25 @@ const deleteProduct = async (productId, access_token) => {
     }
 }
 
+const deleteManyProducts = async (ids: [], access_token: string) => {
+    try {
+        const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL}/product/delete-many`, {
+            data: ids,
+            headers: {
+                token: `Bearer ${access_token}`
+            }
+        });
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export default {
     getAllProduct,
     createProduct,
     getDetailProduct,
+    deleteManyProducts,
     updateProduct,
     deleteProduct
 }

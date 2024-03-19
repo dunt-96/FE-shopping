@@ -14,7 +14,7 @@ import { getBase64 } from '../../utils';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
 import InputComponent from '../InputComponent/InputComponent';
 import { Loading } from '../Loading/Loading';
-import ModelComponent from '../ModelComponent/ModelComponent';
+import ModelComponent from '../ModelComponet/ModelComponent';
 import TableComponent from '../TableComponent/TableComponent';
 import { WrapperFormItem, WrapperHeader, WrapperUploadFile } from "./style";
 
@@ -34,6 +34,8 @@ const AdminProduct = () => {
     const searchInput = useRef<InputRef>(null);
 
     const [rowSelected, setRowSelected] = useState('');
+    const [isDeleteManyProducts, setIsDeleteManyProduct] = useState(false);
+    const [listIdsDelete, setListIdsDelete] = useState([]);
 
     const fetchAllProduct = async () => {
         const res = await ProductService.getAllProduct();
@@ -53,6 +55,14 @@ const AdminProduct = () => {
 
     const mutation = useMutationHook(
         (data) => ProductService.createProduct(data)
+    );
+    const mutationDeleteManyProducts = useMutationHook(
+        async (data) => {
+            const { ids, access_token } = data;
+            const res = await ProductService.deleteManyProducts(ids, access_token);
+
+            return res;
+        }
     );
 
     const mutationUpdate = useMutationHook(
@@ -86,6 +96,7 @@ const AdminProduct = () => {
     const { data, isSuccess, isPending, isError } = mutation;
     const { data: dataUpdated, isPending: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate;
     const { data: deleteData, isPending: isPendingDeleteProd, isSuccess: isSuccessDeleteProd, isError: isErrorDeleteProd } = mutationDeleteProduct;
+    const { data: deleteManyData, isPending: isPendingDeleteMany, isSuccess: isSuccessDeleteMany, isError: isErrorDeleteMany } = mutationDeleteManyProducts;
     const [form] = Form.useForm();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -129,6 +140,17 @@ const AdminProduct = () => {
             image: file.preview
         })
     };
+
+    const handleDeleteManyProducts = () => {
+        console.log('list id delete', listIdsDelete);
+        // handleClickDelete();
+        // setIsDeleteManyProduct(true);
+        // console.log('ids', ids);
+        mutationDeleteManyProducts.mutate({
+            ids: listIdsDelete,
+            access_token: user.access_token
+        })
+    }
 
 
     const showModal = () => {
@@ -209,9 +231,9 @@ const AdminProduct = () => {
     };
 
     const handleDetailsProduct = async () => {
+        setIsDeleteManyProduct(false);
         setIsLoadingUpdate(true);
         showDrawer();
-
     }
 
     const handleCloseDrawer = () => {
@@ -247,6 +269,16 @@ const AdminProduct = () => {
             message.error()
         }
     }, [isSuccessDeleteProd])
+
+    useEffect(() => {
+        if (isSuccessDeleteMany && deleteManyData?.status === 'OK') {
+            message.success()
+            refreshListDataProduct();
+            setIsModalOpenDelete(false);
+        } else if (isErrorUpdated) {
+            message.error()
+        }
+    }, [isSuccessDeleteMany])
 
 
     const onUpdateProduct = async () => {
@@ -304,6 +336,17 @@ const AdminProduct = () => {
         setIsLoadingUpdate(false);
     }
 
+    const handleDeleteAll = (ids) => {
+        console.log(ids);
+        setIsDeleteManyProduct(true);
+        setListIdsDelete(ids);
+        handleClickDelete();
+    }
+
+    const handleClickOkDeleteProduct = () => {
+        return isDeleteManyProducts ? handleDeleteManyProducts() : handleDeleteProduct();
+    }
+
     const handleDeleteProduct = () => {
         console.log('token from user', user.access_token);
         console.log('product id', rowSelected);
@@ -318,11 +361,14 @@ const AdminProduct = () => {
             // },
         )
     }
+    const handleClickDelete = () => {
+        setIsModalOpenDelete(true);
+    }
 
     const renderAction = () => {
         return (
             <div style={{ gap: '10px' }}>
-                <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
+                <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={handleClickDelete} />
                 <EditOutlined style={{ color: 'orange', fontSize: '30px', cursor: 'pointer' }} onClick={handleDetailsProduct} />
             </div>
         )
@@ -493,7 +539,7 @@ const AdminProduct = () => {
                 </Button>
             </div>
             <div style={{ marginTop: '20px' }}>
-                <TableComponent selectionType={'checkbox'} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
+                <TableComponent handleDeleteMany={handleDeleteAll} selectionType={'checkbox'} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
                     return {
                         onClick: event => {
                             console.log('on click row', record._id);
@@ -665,9 +711,9 @@ const AdminProduct = () => {
                     </Form>
                 </Loading>
             </DrawerComponent>
-            <ModelComponent forceRender title="Xoá sản phẩm" open={isModalOpenDelete} onOk={handleDeleteProduct} onCancel={handleCancelDeleteModal}  >
-                <Loading isLoading={isPendingDeleteProd}>
-                    <div>Bạn có chắc muốn xoá sản phẩm này không ?</div>
+            <ModelComponent forceRender title="Xoá sản phẩm" open={isModalOpenDelete} onOk={handleClickOkDeleteProduct} onCancel={handleCancelDeleteModal}  >
+                <Loading isLoading={isDeleteManyProducts ? isPendingDeleteMany : isPendingDeleteProd}>
+                    <div>Bạn có chắc muốn xoá {isDeleteManyProducts ? "những" : ''} sản phẩm này không ?</div>
                 </Loading>
             </ModelComponent>
         </div>
