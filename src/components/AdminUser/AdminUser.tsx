@@ -331,7 +331,6 @@ const AdminUser = () => {
     }
 
     const handleDeleteManyUser = () => {
-        console.log('list id delete 11111', listIdsDelete);
         // handleClickDelete();
         // setIsDeleteManyProduct(true);
         // console.log('ids', ids);

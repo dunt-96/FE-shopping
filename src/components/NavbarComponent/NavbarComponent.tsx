@@ -1,6 +1,7 @@
-import { WrapperContent, WrapperLabelText, WrapperTextValue } from './style'
+import { WrapperContent, WrapperLabelText, WrapperTextValue } from './style';
 
-const NavbarComponent = () => {
+const NavbarComponent = (props) => {
+    const { arr = ['test1', 'test2'] } = props;
     const renderContent = ({ type, options }: { type: string, options: any[] }) => {
         const onChange = () => { };
         switch (type) {
@@ -40,9 +41,9 @@ const NavbarComponent = () => {
     }
     return (
         <div>
-            <WrapperLabelText>Label</WrapperLabelText>
+            <WrapperLabelText>Danh mục sản phẩm </WrapperLabelText>
             <WrapperContent>
-                {renderContent({ type: 'text', options: ['Tu Lanh', 'TV', 'Dieu Hoa'] })}
+                {renderContent({ type: 'text', options: arr })}
             </WrapperContent>
 
             <WrapperContent>

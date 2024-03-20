@@ -1,5 +1,6 @@
 import { Action, ThunkAction, configureStore } from '@reduxjs/toolkit';
 import counterReducer from './slices/counterSlice';
+import orderReducer from './slices/orderSlice';
 import productReducer from './slices/productSlice';
 import userReducer from './slices/userSlice';
 
@@ -8,6 +9,7 @@ export const store = configureStore({
     counter: counterReducer,
     user: userReducer,
     product: productReducer,
+    order: orderReducer
   },
 });
 

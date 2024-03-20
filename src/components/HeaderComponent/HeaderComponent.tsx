@@ -40,7 +40,6 @@ const HeaderComponent = (props) => {
     };
 
     useEffect(() => {
-        console.log('1111');
         setLoading(true);
         setName(user.name);
         setAvatar(user.avatar);
@@ -118,7 +117,7 @@ const HeaderComponent = (props) => {
                 </Loading>
                 {!isHiddenCart &&
                     (
-                        <div style={{ alignItems: 'center', gap: '5px' }}>
+                        <div onClick={() => navigate('/order')} style={{ cursor: "pointer", alignItems: 'center', gap: '5px' }}>
                             <Badge count={4} size='small'>
                                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
                             </Badge>

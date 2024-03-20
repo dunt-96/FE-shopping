@@ -27,6 +27,19 @@ const CardComponent = (props) => {
     navigate(`/product-detail/${id}`);
   }
 
+  const renderStar = (rating) => {
+    const htmlList = [];
+    // for (let index = 0; index < product?.data.rating; index++) {
+    //   htmlList.push(<StarFilled style={{ fontSize: '15px', color: 'rgb(253, 216, 54)', }} />);
+    // }
+    return Array.from(
+      { length: rating },
+      (_, i) => (
+        <StarFilled key={i} style={{ fontSize: '15px', color: 'rgb(253, 216, 54)', }} />
+      )
+    );
+  }
+
   return (
     <WrapperCardStyle
       hoverable
@@ -40,7 +53,8 @@ const CardComponent = (props) => {
       <StyleNameProduct> {name} </StyleNameProduct>
       <WrapperReportText>
         <span style={{ marginRight: '4px' }}>
-          <span>{rating}</span> <StarFilled style={{ fontSize: '12px', color: 'rgb(253, 216, 54)', }} />
+          {/* <span>{rating}</span> <StarFilled style={{ fontSize: '12px', color: 'rgb(253, 216, 54)', }} /> */}
+          {renderStar(rating)}
         </span>
 
         <WrapperStyleTextSell>| {selled}</WrapperStyleTextSell>

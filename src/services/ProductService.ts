@@ -20,6 +20,18 @@ const getAllProduct = async (searchString, limit = 0) => {
     }
 }
 
+const getAllProductWithType = async (type) => {
+    try {
+        let res;
+        if (type) {
+            res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all?filter=type&filter=${type}`);
+        }
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 const createProduct = async (data) => {
     try {
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/product/create`, data);
@@ -95,5 +107,6 @@ export default {
     deleteManyProducts,
     updateProduct,
     deleteProduct,
-    getAllTypeProduct
+    getAllTypeProduct,
+    getAllProductWithType
 }
