@@ -70,7 +70,7 @@ const HomePage = () => {
                 </WrapperTypeProduct >
 
             </div >
-            <div className='body' style={{ width: '100%', background: '#efefef' }}>
+            <div className='body' style={{ width: '100%', background: '#efefef', height: 'calc(100vh - 84px)' }}>
                 <div id='container' style={{ height: '1000px', width: '2150px', margin: '0 auto' }}>
                     <SliderComponent arrImages={[slider1, slider2, slider3]}></SliderComponent>
                     <Loading isLoading={isPending}>

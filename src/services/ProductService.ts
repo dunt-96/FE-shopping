@@ -20,11 +20,11 @@ const getAllProduct = async (searchString, limit = 0) => {
     }
 }
 
-const getAllProductWithType = async (type) => {
+const getAllProductWithType = async (type, page = 0, limit = 10) => {
     try {
         let res;
         if (type) {
-            res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all?filter=type&filter=${type}`);
+            res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all?filter=type&filter=${type}&page=${page}&limit=${limit}`);
         }
         return res.data;
     } catch (error) {

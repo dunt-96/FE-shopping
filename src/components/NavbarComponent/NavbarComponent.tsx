@@ -1,13 +1,20 @@
 import { WrapperContent, WrapperLabelText, WrapperTextValue } from './style';
 
 const NavbarComponent = (props) => {
-    const { arr = ['test1', 'test2'] } = props;
+    const { arr = ['test1', 'test2'], onClick, currentSelectedType } = props;
     const renderContent = ({ type, options }: { type: string, options: any[] }) => {
-        const onChange = () => { };
         switch (type) {
             case 'text':
-                return options.map((option) => {
-                    return <WrapperTextValue key={option}>{option}</WrapperTextValue>
+                return options.map((val) => {
+                    return <WrapperTextValue
+                        style={{
+                            background: `${currentSelectedType === val ? "rgb(26, 148, 255)" : "#fff"}`,
+                            color: `${currentSelectedType === val ? "#fff" : "rgb(26, 148, 255)"}`
+                        }}
+                        onClick={(_) => {
+                            onClick(val)
+                        }}
+                        key={val}>{val}</WrapperTextValue>
                 });
             // case 'checkbox':
             //     return (

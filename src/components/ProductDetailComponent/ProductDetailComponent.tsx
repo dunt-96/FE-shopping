@@ -6,6 +6,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { Col, Image, Row } from 'antd'
 import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Anh from '../../assets/images/anh.jpg'
 import { useAppSelector } from '../../redux/hooks'
 import ProductService from '../../services/ProductService'
@@ -15,6 +16,8 @@ import { WrapperAddressProduct, WrapperInputNumber, WrapperPriceProduct, Wrapper
 const ProductDetailComponent = ({ productId }) => {
   const user = useAppSelector((state) => state.user);
   let [quantity, setQuantity] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const onChange = (e) => {
     setQuantity(e.target.value);
@@ -56,6 +59,13 @@ const ProductDetailComponent = ({ productId }) => {
 
   const handleChangeIncrease = () => {
     setQuantity(++quantity);
+  }
+
+  const handleAddOrderProduct = () => {
+    if (!user.id) {
+      navigate('/sign-in', { state: location?.pathname });
+    }
+
   }
 
   return (
@@ -128,7 +138,7 @@ const ProductDetailComponent = ({ productId }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '20px' }}>
           <ButtonComponent
             size={40}
-            // onClick={decreaseQuantity}
+            onClick={handleAddOrderProduct}
             textBtn='Chọn mua'
             styleTextBtn={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
             styleBtn={{

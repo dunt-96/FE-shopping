@@ -4,6 +4,8 @@ import { useLocation, useParams } from 'react-router-dom';
 import CardComponent from '../../components/CardComponent/CardComponent';
 import { Loading } from '../../components/Loading/Loading';
 import NavbarComponent from '../../components/NavbarComponent/NavbarComponent';
+import { useDebounce } from '../../hooks/useDebounce';
+import { useAppSelector } from '../../redux/hooks';
 import ProductService from '../../services/ProductService';
 import { WrapperNavbar, WrapperProducts } from './style';
 
@@ -40,31 +42,42 @@ export class Convert {
 
 const TypeProductPage = () => {
     const { state } = useLocation();
-    const onChange = () => { };
     const typeName = useParams();
-    const [products, setProducts] = useState<ProductModel[]>([]);
+    let [products, setProducts] = useState<ProductModel[]>([]);
     const [allTypeProducts, setAllTypeProduct] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [currentType, setCurrentType] = useState(state);
+    const [paginate, setPaginate] = useState({
+        page: 0,
+        limit: 3,
+        total: 1,
+    });
 
-    const fetchProductWithType = async (type) => {
-        const res = await ProductService.getAllProductWithType(type);
+    const searchString = useAppSelector((state) => state.product.searchString);
+    const searchDebounce = useDebounce(searchString, 500);
+
+    const fetchProductWithType = async (type, page, limit) => {
+        const res = await ProductService.getAllProductWithType(type, page, limit);
         if (res?.status === "OK") {
             setProducts(res?.data);
+            setPaginate({
+                ...paginate,
+                total: res?.total
+            })
         }
         setLoading(false);
     }
 
     useEffect(() => {
-        if (state) {
+        if (currentType) {
             setLoading(true);
-            fetchProductWithType(state);
+            fetchProductWithType(currentType, paginate.page, paginate.limit);
         }
-    }, [])
+    }, [paginate.page, currentType])
 
     const fetchAllTypeProduct = async () => {
         const res = await ProductService.getAllTypeProduct();
         if (res?.status === "OK") {
-            console.log('res', res?.data);
             setAllTypeProduct(res?.data);
         }
     }
@@ -73,18 +86,34 @@ const TypeProductPage = () => {
         fetchAllTypeProduct();
     }, [])
 
-    console.log('typeNem', typeName.type);
+    const onChange = (number, pagSize) => {
+        setPaginate({
+            ...paginate,
+            page: --number
+        })
+    };
+
+    const handleOnClickNavType = (type) => {
+        setCurrentType(type);
+    }
+
     return (
         <Loading isLoading={loading}>
             <div style={{ width: '100%', background: '#efefef', height: 'calc(100vh - 84px)' }}>
                 <div style={{ width: '2150px', margin: '0 auto', height: '100%' }}>
-                    <Row style={{ flexWrap: 'nowrap', paddingTop: '10px', height: '100%' }}>
+                    <Row style={{ flexWrap: 'nowrap', paddingTop: '10px', height: '100%', width: '100%' }}>
                         <WrapperNavbar span={4} >
-                            <NavbarComponent arr={allTypeProducts} />
+                            <NavbarComponent currentSelectedType={currentType} onClick={handleOnClickNavType} arr={allTypeProducts} />
                         </WrapperNavbar>
                         <Col span={20} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                             <WrapperProducts>
-                                {products && products?.map(
+                                {products?.filter((prod) => {
+                                    if (searchString === '') {
+                                        return prod;
+                                    } else if (prod?.name?.toLocaleLowerCase().includes(searchDebounce?.toLocaleLowerCase())) {
+                                        return prod;
+                                    }
+                                })?.map(
                                     (product) => {
                                         return (<CardComponent
                                             key={product?._id}
@@ -102,13 +131,12 @@ const TypeProductPage = () => {
                                     }
                                 )}
                             </WrapperProducts>
-                            <Pagination showQuickJumper defaultCurrent={2} total={100} onChange={onChange} style={{ textAlign: 'center', marginTop: '10px', marginBottom: '20px' }} />
+                            <Pagination showQuickJumper={false} defaultPageSize={paginate.limit} defaultCurrent={paginate.page + 1} total={paginate.total} onChange={(number, pagSize) => onChange(number, pagSize)} style={{ textAlign: 'center', marginTop: '10px', marginBottom: '20px' }} />
                         </Col>
                     </Row>
                 </div>
-            </div>
+            </div >
         </Loading>
-
 
     )
 }

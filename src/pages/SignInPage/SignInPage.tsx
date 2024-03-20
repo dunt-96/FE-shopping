@@ -5,7 +5,7 @@ import {
 import { Image } from 'antd';
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import imgLogoLogin from '../../assets/images/logo-login.png';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import InputForm from '../../components/InputForm/InputForm';
@@ -30,13 +30,18 @@ const SignInPage = () => {
   const [disableBtnSignIn, setDisableBtnSignIn] = useState(!email || !password);
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => userState);
+  const location = useLocation();
 
   const { data, isPending, isSuccess } = mutation;
 
   useEffect(() => {
     // handleOnClickSingIn();
     if (isSuccess) {
-      navigate('/');
+      if (location.state) {
+        navigate(location.state);
+      } else {
+        navigate('/');
+      }
       localStorage.setItem('access_token', JSON.stringify(data?.data.access_token))
       localStorage.setItem('refresh_token', JSON.stringify(data?.data.refresh_token))
       if (data?.data.access_token ?? '') {
