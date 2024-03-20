@@ -79,11 +79,21 @@ const deleteManyProducts = async (ids: [], access_token: string) => {
     }
 }
 
+const getAllTypeProduct = async () => {
+    try {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all-type`)
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export default {
     getAllProduct,
     createProduct,
     getDetailProduct,
     deleteManyProducts,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getAllTypeProduct
 }

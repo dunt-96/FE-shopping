@@ -1,4 +1,3 @@
-import { MenuProps } from "antd";
 
 export const isJsonString = (data: any) => {
     try {
@@ -18,20 +17,22 @@ export const getBase64 = (file) =>
         reader.onerror = (error) => reject(error);
     });
 
-type MenuItem = Required<MenuProps>['items'][number];
-export function getItem(
-    label: React.ReactNode,
-    key: React.Key,
-    icon?: React.ReactNode,
-    children?: MenuItem[],
-    type?: 'group',
-): MenuItem {
-    return {
-        key,
-        icon,
-        children,
-        label,
-        type,
-    } as MenuItem;
-}
+export const renderOptions = (arr) => {
+    console.log('arr', arr);
+    let renderArray = <any>[];
+    if (arr) {
+        renderArray = arr?.map((opt) => {
+            return {
+                value: opt,
+                label: opt
+            }
+        });
 
+        renderArray.push({
+            label: "Them moi",
+            value: "add_type"
+        })
+    }
+
+    return renderArray;
+}

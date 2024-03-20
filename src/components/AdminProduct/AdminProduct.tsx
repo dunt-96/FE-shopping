@@ -1,6 +1,6 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Form, InputRef, Space } from "antd";
+import { Button, Form, InputRef, Select, Space } from "antd";
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { productState, updateCurrentIdProduct } from '../../redux/slices/productSlice';
 import { userState } from '../../redux/slices/userSlice';
 import ProductService from '../../services/ProductService';
-import { getBase64 } from '../../utils';
+import { getBase64, renderOptions } from '../../utils';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
 import InputComponent from '../InputComponent/InputComponent';
 import { Loading } from '../Loading/Loading';
@@ -24,11 +24,13 @@ type FieldType = {
     remember?: string;
 };
 
+let index = 0;
+
 const AdminProduct = () => {
     const product = useAppSelector((productState));
     const dispatch = useAppDispatch()
     const user = useSelector(userState);
-
+    const inputRef = useRef<InputRef>(null);
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef<InputRef>(null);
@@ -36,9 +38,18 @@ const AdminProduct = () => {
     const [rowSelected, setRowSelected] = useState('');
     const [isDeleteManyProducts, setIsDeleteManyProduct] = useState(false);
     const [listIdsDelete, setListIdsDelete] = useState([]);
+    const [selectedType, setSelectType] = useState('');
+
 
     const fetchAllProduct = async () => {
         const res = await ProductService.getAllProduct('');
+
+        return res?.data;
+    }
+    const fetchAllTypeProduct = async () => {
+        const res = await ProductService.getAllTypeProduct();
+        // setSelectType(res?.data[0]);
+        // setAllTypeProductState(res?.data);
 
         return res?.data;
     }
@@ -50,8 +61,14 @@ const AdminProduct = () => {
         retryDelay: 1000
     })
 
-    const { isLoading: isLoadingProducts, data: products } = queryProduct;
+    const { data: allTypeProduct, isLoading, isSuccess: isSuccessAllType } = useQuery({
+        queryKey: ['type_products'],
+        queryFn: async () => await fetchAllTypeProduct(),
+        retry: 3,
+        retryDelay: 1000
+    })
 
+    const { isLoading: isLoadingProducts, data: products } = queryProduct;
 
     const mutation = useMutationHook(
         (data) => ProductService.createProduct(data)
@@ -111,6 +128,7 @@ const AdminProduct = () => {
         type: '',
         countInStock: '',
         discount: '',
+        newType: ''
     })
     const [stateProduct, setStateProduct] = useState(initial())
     const [stateProductDetail, setStateProductDetail] = useState(initial())
@@ -189,7 +207,7 @@ const AdminProduct = () => {
 
     const onFinish = async (values) => {
         console.log('state', stateProduct);
-        await mutation.mutateAsync(stateProduct);
+        await mutation.mutateAsync({ ...stateProduct, type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type });
         // const params = {
         //     name: stateProduct.name,
         //     type: stateProduct.type,
@@ -246,7 +264,8 @@ const AdminProduct = () => {
             image: '',
             type: '',
             countInStock: '',
-            discount: ''
+            discount: '',
+            newType: ''
         })
         form.resetFields()
     };
@@ -280,7 +299,6 @@ const AdminProduct = () => {
         }
     }, [isSuccessDeleteMany])
 
-
     const onUpdateProduct = async () => {
         setIsLoadingUpdate(true);
         const access_token = localStorage.getItem('access_token');
@@ -289,19 +307,6 @@ const AdminProduct = () => {
         refreshListDataProduct();
         setIsLoadingUpdate(false);
         onClose();
-
-        // if (rowSelected) {
-        //     mutationUpdate.mutate({
-        //         id: rowSelected,
-        //         product: stateProductDetail,
-        //         token: access_token
-        //     })
-        //     setIsLoadingUpdate(false);
-        //     onClose();
-        //     if (isSuccessUpdated) {
-        //         await refreshListDataProduct();
-        //     }
-        // }
     }
 
     const refreshListDataProduct = async () => {
@@ -330,7 +335,8 @@ const AdminProduct = () => {
                 image: res.data.image,
                 type: res.data.type,
                 countInStock: res.data.countInStock,
-                discount: res.data.discount
+                discount: res.data.discount,
+                newType: ''
             })
         }
         setIsLoadingUpdate(false);
@@ -389,6 +395,15 @@ const AdminProduct = () => {
         clearFilters();
         setSearchText('');
     };
+
+    const handleChangeSelect = (val) => {
+        setSelectType(val);
+        console.log('add more type', val);
+        setStateProduct({
+            ...stateProduct,
+            type: val
+        })
+    }
 
     const getColumnSearchProps = (dataIndex) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
@@ -530,6 +545,8 @@ const AdminProduct = () => {
         return { ...product, key: product._id }
     })
 
+    console.log('allTypeProduct', allTypeProduct);
+
     return (
         <div>
             <WrapperHeader>Quản lý sản phẩm</WrapperHeader>
@@ -571,11 +588,28 @@ const AdminProduct = () => {
 
                         <Form.Item
                             label="Type"
-                            name="Type"
+                            name="type"
                             rules={[{ required: true, message: 'Please input your type!' }]}
                         >
-                            <InputComponent value={stateProduct.type} onChange={handleOnchange} name="type" />
+                            <Select
+                                // name="type"
+                                // defaultValue="lucy"
+                                // style={{ width: 120 }}
+                                value={stateProduct.type}
+                                onChange={handleChangeSelect}
+                                options={renderOptions(allTypeProduct)}
+                            />
                         </Form.Item>
+                        {stateProduct?.type === 'add_type' && (
+                            <Form.Item
+                                label='New type'
+                                name="newType"
+                                rules={[{ required: true, message: 'Please input your new type!' }]}
+                            >
+                                <InputComponent value={stateProduct.newType} onChange={handleOnchange} name="newType" />
+                            </Form.Item>
+                        )}
+
                         <Form.Item
                             label="Count in stock"
                             name="countInStock"

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import slider1 from '../../assets/images/slider1.webp'
 import slider2 from '../../assets/images/slider2.webp'
 import slider3 from '../../assets/images/slider3.webp'
@@ -17,20 +17,31 @@ const HomePage = () => {
     const arr = ['TV', 'Tu Lanh', 'Laptop']
     const searchProduct = useAppSelector((state) => state.product.searchString);
     const [loading, setLoading] = useState(false);
+    const [allTypeProducts, setAllTypeProduct] = useState([]);
     const searchDebounce = useDebounce(searchProduct, 1000);
     const [limit, setLimit] = useState(6);
 
     const fetchAllProduct = async (context) => {
-        console.log('context', context.queryKey);
         const limit = context && context.queryKey[1];
         const searchString = context && context.queryKey[2];
 
         setLoading(true);
         const res = await ProductService.getAllProduct(searchString, limit);
-        console.log('1111', res.data);
         setLoading(false);
         return res?.data;
     }
+
+    const fetchAllTypeProduct = async () => {
+        const res = await ProductService.getAllTypeProduct();
+        if (res?.status === "OK") {
+            console.log('res', res?.data);
+            setAllTypeProduct(res?.data);
+        }
+    }
+
+    useEffect(() => {
+        fetchAllTypeProduct();
+    }, [])
 
     const { isPending, isError, data: products, error, isPlaceholderData } = useQuery({
         queryKey: [
@@ -47,13 +58,12 @@ const HomePage = () => {
 
     });
 
-    console.log('products ', products);
 
     return (
         <>
             <div style={{ width: '2150px', margin: '0 auto' }}>
                 <WrapperTypeProduct >
-                    {arr.map((val, idx) => {
+                    {allTypeProducts.map((val, idx) => {
                         return <TypeProduct name={val} key={idx}></TypeProduct>
                     })
                     }

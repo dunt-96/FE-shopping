@@ -1,7 +1,7 @@
-import { Col, Pagination, Row } from 'antd'
-import CardComponent from '../../components/CardComponent/CardComponent'
-import NavbarComponent from '../../components/NavbarComponent/NavbarComponent'
-import { WrapperNavbar, WrapperProducts } from './style'
+import { Col, Pagination, Row } from 'antd';
+import NavbarComponent from '../../components/NavbarComponent/NavbarComponent';
+import { WrapperNavbar, WrapperProducts } from './style';
+import CardComponent from '../../components/CardComponent/CardComponent';
 
 const TypeProductPage = () => {
     const onChange = () => { };
