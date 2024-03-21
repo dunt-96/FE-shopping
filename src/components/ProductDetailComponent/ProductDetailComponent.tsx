@@ -8,7 +8,8 @@ import { Col, Image, Row } from 'antd'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Anh from '../../assets/images/anh.jpg'
-import { useAppSelector } from '../../redux/hooks'
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'
+import { addOrderProduct } from '../../redux/slices/orderSlice'
 import ProductService from '../../services/ProductService'
 import ButtonComponent from '../ButtonComponent/ButtonComponent'
 import { WrapperAddressProduct, WrapperInputNumber, WrapperPriceProduct, WrapperPriceTextProduct, WrapperQualityProduct, WrapperStyleImageSmall, WrapperStyleImageSmallCol, WrapperStyleNameProduct, WrapperStyleTextSell } from './style'
@@ -18,6 +19,8 @@ const ProductDetailComponent = ({ productId }) => {
   let [quantity, setQuantity] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const orderState = useAppSelector((state) => state.order);
+  const dispatch = useAppDispatch();
 
   const onChange = (e) => {
     setQuantity(e.target.value);
@@ -27,11 +30,9 @@ const ProductDetailComponent = ({ productId }) => {
     const id = context?.queryKey && context?.queryKey[1]
     if (id) {
       const res = await ProductService.getDetailProduct(productId);
-      return res;
+      return res.data;
     }
   }
-
-
 
   const { isPending, data: product } = useQuery({
     queryKey: ["product", productId],
@@ -40,12 +41,8 @@ const ProductDetailComponent = ({ productId }) => {
   });
 
   const renderStart = () => {
-    const htmlList = [];
-    // for (let index = 0; index < product?.data.rating; index++) {
-    //   htmlList.push(<StarFilled style={{ fontSize: '15px', color: 'rgb(253, 216, 54)', }} />);
-    // }
     return Array.from(
-      { length: product?.data.rating },
+      { length: product?.rating },
       (_, i) => (
         <StarFilled key={i} style={{ fontSize: '15px', color: 'rgb(253, 216, 54)', }} />
       )
@@ -62,8 +59,19 @@ const ProductDetailComponent = ({ productId }) => {
   }
 
   const handleAddOrderProduct = () => {
-    if (!user.id) {
+    if (!user?.id) {
       navigate('/sign-in', { state: location?.pathname });
+    }
+    else {
+      dispatch(addOrderProduct({
+        orderItem: {
+          name: product?.name,
+          amount: quantity,
+          image: product?.image,
+          price: product?.price,
+          product: product?._id
+        }
+      }))
     }
 
   }
@@ -71,7 +79,7 @@ const ProductDetailComponent = ({ productId }) => {
   return (
     <Row style={{ background: '#fff', padding: '16px', borderRadius: '4px' }}>
       <Col span={10} style={{ borderRight: '1px solid #e5e5e5', paddingRight: '10px' }}>
-        <Image src={product?.data.image} alt='image product' preview={false} />
+        <Image src={product?.image} alt='image product' preview={false} />
         <Row style={{ marginTop: '10px', justifyContent: 'space-between' }}>
           <WrapperStyleImageSmallCol span={4}>
             <WrapperStyleImageSmall src={Anh} alt='image product' preview={false} />
@@ -97,20 +105,20 @@ const ProductDetailComponent = ({ productId }) => {
         </div> */}
       </Col>
       <Col span={14} style={{ padding: '10px' }}>
-        <WrapperStyleNameProduct>{product?.data.name}</WrapperStyleNameProduct>
+        <WrapperStyleNameProduct>{product?.name}</WrapperStyleNameProduct>
         <div style={{ display: 'flex' }}>
           {product && renderStart()}
-          {/* <Rate allowHalf defaultValue={product?.data.rating} /> */}
+          {/* <Rate allowHalf defaultValue={product?.rating} /> */}
           {/* {renderStart()} */}
           {/* <StarFilled style={{ fontSize: '15px', color: 'rgb(253, 216, 54)', }} />
           <StarFilled style={{ fontSize: '15px', color: 'rgb(253, 216, 54)', }} />
           <StarFilled style={{ fontSize: '15px', color: 'rgb(253, 216, 54)', }} />
           <StarFilled style={{ fontSize: '15px', color: 'rgb(253, 216, 54)', }} /> */}
-          <WrapperStyleTextSell>| Da ban ${product?.data.selled}</WrapperStyleTextSell>
+          <WrapperStyleTextSell>| Da ban ${product?.selled}</WrapperStyleTextSell>
         </div>
         <WrapperPriceProduct>
           <WrapperPriceTextProduct>
-            {product?.data.price}
+            {product?.price}
           </WrapperPriceTextProduct>
         </WrapperPriceProduct>
         <WrapperAddressProduct>

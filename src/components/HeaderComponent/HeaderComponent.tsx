@@ -7,7 +7,7 @@ import { Badge, Col, Popover } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { onSearchReducer } from '../../redux/slices/productSlice';
 import { resetUser, userState } from '../../redux/slices/userSlice';
 import UserService from '../../services/UserService';
@@ -20,6 +20,7 @@ const HeaderComponent = (props) => {
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const orderState = useAppSelector((state) => state.order);
     const handleNavigation = () => {
         navigate('/sign-in')
     }
@@ -118,7 +119,7 @@ const HeaderComponent = (props) => {
                 {!isHiddenCart &&
                     (
                         <div onClick={() => navigate('/order')} style={{ cursor: "pointer", alignItems: 'center', gap: '5px' }}>
-                            <Badge count={4} size='small'>
+                            <Badge count={orderState?.orderItems?.length} size='small'>
                                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
                             </Badge>
                             <WrapperTextHeaderSmall>Gio hang</WrapperTextHeaderSmall>

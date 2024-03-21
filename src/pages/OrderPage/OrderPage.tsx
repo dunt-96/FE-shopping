@@ -3,60 +3,60 @@ import { Checkbox } from 'antd';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
-import { WrapperInputNumber } from '../../components/ProductDetailComponent/style';
 import { useAppSelector } from '../../redux/hooks';
-import { WrapperCountOrder, WrapperInfo, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperTotal } from './style';
+import { decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct } from '../../redux/slices/orderSlice';
+import { WrapperCountOrder, WrapperInfo, WrapperInputNumber, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperTotal } from './style';
 
 const OrderPage = () => {
     const order = useAppSelector((state) => state.order)
-    const [listChecked, setListChecked]: Record<string, any>[] = useState([]);
+    const [listChecked, setListChecked] = useState(['']);
     const dispatch = useDispatch()
+
     const onChange = (e) => {
-        // if (listChecked.includes(e.target.value)) {
-        //     const newListChecked = listChecked.filter((item) => item !== e.target.value)
-        //     setListChecked(newListChecked)
-        // } else {
-        //     setListChecked([...listChecked, e.target.value])
-        // }
+        if (listChecked.includes(e.target.value)) {
+            const newListChecked = listChecked.filter((item) => item !== e.target.value)
+            setListChecked(newListChecked)
+        } else {
+            setListChecked([...listChecked, e.target.value])
+        }
     };
 
     const handleChangeCount = (type, idProduct) => {
-        // if (type === 'increase') {
-        //     dispatch(increaseAmount({ idProduct }))
-        // } else {
-        //     dispatch(decreaseAmount({ idProduct }))
-        // }
+        if (type === 'increase') {
+            dispatch(increaseAmount({ idProduct }))
+        } else {
+            dispatch(decreaseAmount({ idProduct }))
+        }
     }
 
     const handleDeleteOrder = (idProduct) => {
-        // dispatch(removeOrderProduct({ idProduct }))
+        dispatch(removeOrderProduct({ idProduct }))
     }
 
     const handleOnchangeCheckAll = (e) => {
-        // if (e.target.checked) {
-        //     const newListChecked = []
-        //     order?.orderItems?.forEach((item) => {
-        //         newListChecked.push(item?.product)
-        //     })
-        //     setListChecked(newListChecked)
-        // } else {
-        //     setListChecked([])
-        // }
+        if (e.target.checked) {
+            let newListChecked: string[] = [];
+            order?.orderItems?.forEach((item) => {
+                newListChecked.push(item.product);
+            })
+            setListChecked([...newListChecked])
+        } else {
+            setListChecked([])
+        }
     }
 
     const handleRemoveAllOrder = () => {
-        if (listChecked?.length > 1) {
-            // dispatch(removeAllOrderProduct({ listChecked }))
+        if ((listChecked?.length ?? 0) > 1) {
+            dispatch(removeAllOrderProduct({ listChecked }))
         }
     }
 
     return (
         <>
-            <div>OrderPage</div>
-            <div style={{ background: '#f5f5fa', width: '100%', height: '100vh' }}>
+            <div style={{ background: '#f5f5fa', width: '100%', height: 'calc(100vh - 84px)', paddingTop: '10px' }}>
                 <div style={{ height: '100%', width: '2150px', margin: '0 auto' }}>
-                    <h3>Giỏ hàng</h3>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <h3 style={{ marginTop: '0px' }}>Giỏ hàng</h3>
+                    <div style={{ display: 'flex', justifyContent: 'center', height: '100%' }}>
                         <WrapperLeft>
                             <WrapperStyleHeader>
                                 <span style={{ display: 'inline-block', width: '390px' }}>
@@ -75,29 +75,31 @@ const OrderPage = () => {
                                     return (
                                         <WrapperItemOrder>
                                             <div style={{ width: '390px', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                                <Checkbox onChange={onChange} value={order?.product} checked={listChecked.includes(order?.product)}></Checkbox>
-                                                <img src={order?.image} style={{ width: '77px', height: '79px', objectFit: 'cover' }} />
+                                                <Checkbox onChange={onChange} value={order?.product} checked={listChecked?.includes(order.product)}></Checkbox>
+                                                <img src={order?.image} style={{ marginLeft: '10px', marginRight: '10px', width: '77px', height: '79px', objectFit: 'cover', borderRadius: '5px' }} />
                                                 <div style={{
                                                     width: 260,
                                                     overflow: 'hidden',
                                                     textOverflow: 'ellipsis',
-                                                    whiteSpace: 'nowrap'
+                                                    whiteSpace: 'nowrap',
+                                                    fontWeight: '600',
+                                                    fontSize: '20px'
                                                 }}>{order?.name}</div>
                                             </div>
                                             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                                 <span>
-                                                    <span style={{ fontSize: '13px', color: '#242424' }}>{order?.price}</span>
+                                                    <span style={{ fontSize: '14px', color: '#242424', fontWeight: '600' }}>{order?.price}</span>
                                                 </span>
                                                 <WrapperCountOrder>
-                                                    <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease', order?.product)}>
+                                                    <button style={{ flex: 1, border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease', order?.product)}>
                                                         <MinusOutlined style={{ color: '#000', fontSize: '10px' }} />
                                                     </button>
                                                     <WrapperInputNumber defaultValue={order?.amount} value={order?.amount} size="small" />
-                                                    <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', order?.product)}>
+                                                    <button style={{ flex: 1, border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', order?.product)}>
                                                         <PlusOutlined style={{ color: '#000', fontSize: '10px' }} />
                                                     </button>
                                                 </WrapperCountOrder>
-                                                <span style={{ color: 'rgb(255, 66, 78)', fontSize: '13px', fontWeight: 500 }}>{order?.price * order?.amount}</span>
+                                                <span style={{ color: 'rgb(255, 66, 78)', fontSize: '13px', fontWeight: 500 }}>{order!.price * order?.amount}</span>
                                                 <DeleteOutlined style={{ cursor: 'pointer' }} onClick={() => handleDeleteOrder(order?.product)} />
                                             </div>
                                         </WrapperItemOrder>

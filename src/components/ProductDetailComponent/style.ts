@@ -69,7 +69,10 @@ export const WrapperBtnQualityProduct = styled.span`
 export const WrapperInputNumber = styled(InputNumber)`
     width: 50px;
     text-align: center;
+    // flex: 2;
     align-content:center;
+    // border-top: none;
+    // border-bottom: none;
     overflow-wrap: break-word;
     justify-content: center;
     & .ant-input-number-handler-wrap {

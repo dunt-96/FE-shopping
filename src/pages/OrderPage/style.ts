@@ -1,3 +1,4 @@
+import { InputNumber } from "antd";
 import styled from "styled-components";
 
 export const WrapperStyleHeader = styled.div`
@@ -23,9 +24,10 @@ export const WrapperListOrder = styled.div`
 export const WrapperItemOrder = styled.div`
   display: flex;
   align-items: center;
-  padding: 9px 16px;
+  padding: 15px 16px;
   background: #fff;
   margin-top: 12px;
+  border-radius: 10px;
 `
 
 export const WrapperPriceDiscount = styled.span`
@@ -37,7 +39,7 @@ export const WrapperPriceDiscount = styled.span`
 export const WrapperCountOrder = styled.div`
   display: flex;
   align-items: center;
-  width: 84px;
+  width: 100px;
   border: 1px solid #ccc;
   border-radius: 4px;
 `
@@ -73,4 +75,18 @@ export const WrapperTotal = styled.div`
     background: #fff ;
     border-bottom-right-radius: 6px;
     border-bottom-left-radius: 6px;
+`
+
+export const WrapperInputNumber = styled(InputNumber)`
+    width: 50px;
+    text-align: center;
+    flex: 2;
+    align-content:center;
+    border-top: none;
+    border-bottom: none;
+    overflow-wrap: break-word;
+    justify-content: center;
+    & .ant-input-number-handler-wrap {
+        display: none;
+    }
 `
