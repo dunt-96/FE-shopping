@@ -29,6 +29,7 @@ const initialState = {
     deliveredAt: '',
     deliveredFee: 0,
     priceIncludeAll: 0,
+    listIdChecked:[]
 }
 
 const calcDeliveryFee = (totalPrice) => {
@@ -57,13 +58,39 @@ const orderSlice = createSlice({
             state.deliveredFee = calcDeliveryFee(state.totalPrice);
             state.priceIncludeAll = calcLastPrice(state.totalPrice, state.deliveredFee, state.discount);
         },
+        calcPrice: (state, action) => {
+            const listIdProd = action.payload;
+            console.log('list prod99999', listIdProd);
+            state.listIdChecked = listIdProd;
+            if (listIdProd.length === 0) {
+                console.log('run here');
+                state.priceIncludeAll = 0;
+                state.totalPrice = 0;
+                state.deliveredFee = 0;
+                state.discount = 0;
+            } else {
+                state.priceIncludeAll = 0;
+                state.totalPrice = 0;
+                state.deliveredFee = 0;
+                state.discount = 0;
+
+                listIdProd.forEach(element => {
+                    const itemOrder = state?.orderItems?.find((item) => item?.product === element);
+                    state.totalPrice = state?.totalPrice + ((itemOrder?.price ?? 0) * (itemOrder?.amount ?? 0));
+                    state.discount = state?.discount + ((itemOrder?.discount ?? 0) * (itemOrder?.amount ?? 0));
+
+                    state.deliveredFee = calcDeliveryFee(state.totalPrice);
+                    state.priceIncludeAll = calcLastPrice(state.totalPrice, state.deliveredFee, state.discount);
+                });
+            }
+        },
         increaseAmount: (state, action) => {
             const { idProduct } = action.payload;
             const itemOrder = state?.orderItems?.find((item) => item?.product === idProduct);
             itemOrder!.amount++;
+
             state.totalPrice = state.totalPrice + itemOrder!.price;
             state.discount = state.discount + itemOrder!.discount;
-
 
             state.deliveredFee = calcDeliveryFee(state.totalPrice);
             state.priceIncludeAll = calcLastPrice(state.totalPrice, state.deliveredFee, state.discount);
@@ -89,6 +116,15 @@ const orderSlice = createSlice({
 
             state.deliveredFee = calcDeliveryFee(state.totalPrice);
             state.priceIncludeAll = calcLastPrice(state.totalPrice, state.deliveredFee, state.discount);
+
+            state.listIdChecked = state.listIdChecked.filter((id) => (id !== idProduct));
+
+            if (state.listIdChecked.length === 0) {
+                state.priceIncludeAll = 0;
+                state.totalPrice = 0;
+                state.deliveredFee = 0;
+                state.discount = 0;
+            }
         },
         removeAllOrderProduct: (state, action) => {
             const { listChecked } = action.payload;
@@ -99,12 +135,14 @@ const orderSlice = createSlice({
 
             state.deliveredFee = 0;
             state.priceIncludeAll = 0;
+
+            state.listIdChecked = [];
         },
     }
 })
 
 
-export const { addOrderProduct, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct } = orderSlice.actions;
+export const { addOrderProduct, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, calcPrice } = orderSlice.actions;
 
 export const orderState = (state: RootState) => state.order;
 

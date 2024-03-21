@@ -1,26 +1,32 @@
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { Checkbox } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import { useAppSelector } from '../../redux/hooks';
-import { decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct } from '../../redux/slices/orderSlice';
+import { calcPrice, decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct } from '../../redux/slices/orderSlice';
 import { convertPrice } from '../../utils';
 import { WrapperCountOrder, WrapperInfo, WrapperInputNumber, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperTotal } from './style';
 
 const OrderPage = () => {
     const order = useAppSelector((state) => state.order)
-    const [listChecked, setListChecked] = useState<string[]>([]);
+    const [listChecked, setListChecked] = useState<string[]>(order.listIdChecked);
     const dispatch = useDispatch()
 
     const onChange = (e) => {
         if (listChecked.includes(e.target.value)) {
             const newListChecked = listChecked.filter((item) => item !== e.target.value)
             setListChecked(newListChecked)
+            handleCalcPrice(newListChecked);
         } else {
             setListChecked([...listChecked, e.target.value])
+            handleCalcPrice([...listChecked, e.target.value]);
         }
     };
+
+    useEffect(() => {
+        setListChecked(order.listIdChecked);
+    }, [order.listIdChecked])
 
     const handleChangeCount = (type, idProduct) => {
         if (type === 'increase') {
@@ -35,15 +41,27 @@ const OrderPage = () => {
     }
 
     const handleOnchangeCheckAll = (e) => {
+        if (order.orderItems.length === 0) {
+            setListChecked([])
+            return;
+        }
         if (e.target.checked) {
             let newListChecked: string[] = [];
             order?.orderItems?.forEach((item) => {
                 newListChecked.push(item.product);
             })
             setListChecked([...newListChecked])
+            handleCalcPrice([...newListChecked]);
+
         } else {
             setListChecked([])
+            handleCalcPrice([]);
         }
+
+    }
+
+    const handleCalcPrice = (listChecked) => {
+        dispatch(calcPrice(listChecked));
     }
 
     const handleRemoveAllOrder = () => {
@@ -61,7 +79,7 @@ const OrderPage = () => {
                         <WrapperLeft>
                             <WrapperStyleHeader>
                                 <span style={{ display: 'inline-block', width: '390px' }}>
-                                    <Checkbox onChange={handleOnchangeCheckAll} checked={listChecked?.length === order?.orderItems?.length}></Checkbox>
+                                    <Checkbox onChange={handleOnchangeCheckAll} checked={!(order.orderItems.length === 0) && listChecked?.length === order?.orderItems?.length}></Checkbox>
                                     <span> Tất cả ({order?.orderItems?.length} sản phẩm)</span>
                                 </span>
                                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
