@@ -42,7 +42,7 @@ const AdminProduct = () => {
 
 
     const fetchAllProduct = async () => {
-        const res = await ProductService.getAllProduct('');
+        const res = await ProductService.getAllProduct('', 100);
 
         return res?.data;
     }
@@ -115,6 +115,7 @@ const AdminProduct = () => {
     const { data: deleteData, isPending: isPendingDeleteProd, isSuccess: isSuccessDeleteProd, isError: isErrorDeleteProd } = mutationDeleteProduct;
     const { data: deleteManyData, isPending: isPendingDeleteMany, isSuccess: isSuccessDeleteMany, isError: isErrorDeleteMany } = mutationDeleteManyProducts;
     const [form] = Form.useForm();
+    const [formDetail] = Form.useForm();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
@@ -321,8 +322,8 @@ const AdminProduct = () => {
 
     useEffect(() => {
         // setStateProductDetail(stateProductDetail);
-        form.setFieldsValue(stateProductDetail);
-    }, [form, stateProductDetail])
+        formDetail.setFieldsValue(stateProductDetail);
+    }, [formDetail, stateProductDetail])
 
     const getDetailProduct = async (productId) => {
         const res = await ProductService.getDetailProduct(productId);
@@ -675,7 +676,7 @@ const AdminProduct = () => {
                 <Loading isLoading={isLoadingUpdate}>
                     <Form
                         name="update form"
-                        form={form}
+                        form={formDetail}
                         labelCol={{ span: 6 }}
                         wrapperCol={{ span: 18 }}
                         style={{ maxWidth: 600 }}

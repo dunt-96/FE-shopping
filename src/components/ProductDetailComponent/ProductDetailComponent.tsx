@@ -11,6 +11,7 @@ import Anh from '../../assets/images/anh.jpg'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { addOrderProduct } from '../../redux/slices/orderSlice'
 import ProductService from '../../services/ProductService'
+import { convertPrice } from '../../utils'
 import ButtonComponent from '../ButtonComponent/ButtonComponent'
 import { WrapperAddressProduct, WrapperInputNumber, WrapperPriceProduct, WrapperPriceTextProduct, WrapperQualityProduct, WrapperStyleImageSmall, WrapperStyleImageSmallCol, WrapperStyleNameProduct, WrapperStyleTextSell } from './style'
 
@@ -69,7 +70,8 @@ const ProductDetailComponent = ({ productId }) => {
           amount: quantity,
           image: product?.image,
           price: product?.price,
-          product: product?._id
+          product: product?._id,
+          discount: product.discount
         }
       }))
     }
@@ -118,7 +120,7 @@ const ProductDetailComponent = ({ productId }) => {
         </div>
         <WrapperPriceProduct>
           <WrapperPriceTextProduct>
-            {product?.price}
+            {convertPrice(product?.price)}
           </WrapperPriceTextProduct>
         </WrapperPriceProduct>
         <WrapperAddressProduct>

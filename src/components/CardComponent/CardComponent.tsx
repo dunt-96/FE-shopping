@@ -4,6 +4,7 @@ import {
 import { Image } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import logoOfficial from '../../assets/images/logo-official.png';
+import { convertPrice } from '../../utils';
 import { StyleNameProduct, WrapperCardStyle, WrapperDiscountPriceText, WrapperPriceText, WrapperReportText, WrapperStyleTextSell } from './style';
 
 const CardComponent = (props) => {
@@ -59,7 +60,7 @@ const CardComponent = (props) => {
 
         <WrapperStyleTextSell>| {selled}</WrapperStyleTextSell>
       </WrapperReportText>
-      <WrapperPriceText><span style={{ marginRight: '8px' }}>{price?.toLocaleString() ?? '1222'}</span> <WrapperDiscountPriceText>- {discount}</WrapperDiscountPriceText></WrapperPriceText>
+      <WrapperPriceText><span style={{ marginRight: '8px' }}>{convertPrice(price) ?? ''}</span> <WrapperDiscountPriceText>- {discount}</WrapperDiscountPriceText></WrapperPriceText>
     </WrapperCardStyle>
 
   )
