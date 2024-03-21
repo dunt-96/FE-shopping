@@ -16,7 +16,7 @@ import { WrapperAddressProduct, WrapperInputNumber, WrapperPriceProduct, Wrapper
 
 const ProductDetailComponent = ({ productId }) => {
   const user = useAppSelector((state) => state.user);
-  let [quantity, setQuantity] = useState(0);
+  let [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
   const location = useLocation();
   const orderState = useAppSelector((state) => state.order);
