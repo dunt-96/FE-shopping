@@ -9,6 +9,26 @@ const createCart = async (data) => {
     }
 }
 
+const getAllItems = async (searchString = '', limit = 0) => {
+    try {
+        let res;
+        if (searchString.length > 0) {
+            res = await axios.get(`${process.env.REACT_APP_API_URL}/cart/get-all?filter=name&filter=${searchString}&limit=${limit}`);
+        } else {
+            if (limit === 0) {
+                res = await axios.get(`${process.env.REACT_APP_API_URL}/cart/get-all`);
+            }
+            else {
+                res = await axios.get(`${process.env.REACT_APP_API_URL}/cart/get-all?limit=${limit}`);
+            }
+        }
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export default {
-    createCart
+    createCart,
+    getAllItems
 }

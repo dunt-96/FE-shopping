@@ -41,15 +41,17 @@ const AdminProduct = () => {
     const [selectedType, setSelectType] = useState('');
 
 
-    const fetchAllProduct = async () => {
-        const res = await ProductService.getAllProduct('', 100);
 
-        return res?.data;
-    }
     const fetchAllTypeProduct = async () => {
         const res = await ProductService.getAllTypeProduct();
         // setSelectType(res?.data[0]);
         // setAllTypeProductState(res?.data);
+
+        return res?.data;
+    }
+
+    const fetchAllProduct = async () => {
+        const res = await ProductService.getAllProduct('', 100);
 
         return res?.data;
     }

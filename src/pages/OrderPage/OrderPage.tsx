@@ -1,4 +1,5 @@
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { useQuery } from '@tanstack/react-query';
 import { Checkbox, Form } from 'antd';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -12,6 +13,7 @@ import { useMutationHook } from '../../hooks/mutationHook';
 import { useAppSelector } from '../../redux/hooks';
 import { calcPrice, decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct, updateListChecked, updateListOrderSelected } from '../../redux/slices/orderSlice';
 import { updateUser } from '../../redux/slices/userSlice';
+import CartService from '../../services/CartService';
 import UserService from '../../services/UserService';
 import { convertPrice } from '../../utils';
 import { WrapperCountOrder, WrapperInfo, WrapperInputNumber, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperTotal } from './style';
@@ -32,6 +34,27 @@ const OrderPage = () => {
         address: '',
         city: ''
     })
+
+    const fetchAllItemsInCart = async () => {
+        const res = await CartService.getAllItems();
+
+        return res?.data;
+    }
+
+    const queryCart = useQuery({
+        queryKey: ['products'],
+        queryFn: async () => await fetchAllItemsInCart(),
+        retry: 3,
+        retryDelay: 1000
+    });
+
+    const { isLoading: isLoadingCart, data: listItemsInCart, isSuccess } = queryCart;
+
+    // useEffect(() => {
+    //     dispatch(updateListItemOrder(listItemsInCart))
+    // }, [isSuccess])
+
+    console.log('list item in cart', listItemsInCart);
 
     const mutationUpdate = useMutationHook(
         (data) => {
