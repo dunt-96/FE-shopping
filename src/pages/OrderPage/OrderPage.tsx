@@ -10,7 +10,7 @@ import * as message from '../../components/Message/Message';
 import ModalComponent from '../../components/ModelComponet/ModelComponent';
 import { useMutationHook } from '../../hooks/mutationHook';
 import { useAppSelector } from '../../redux/hooks';
-import { calcPrice, decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct, updateListChecked } from '../../redux/slices/orderSlice';
+import { calcPrice, decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct, updateListChecked, updateListOrderSelected } from '../../redux/slices/orderSlice';
 import { updateUser } from '../../redux/slices/userSlice';
 import UserService from '../../services/UserService';
 import { convertPrice } from '../../utils';
@@ -129,6 +129,7 @@ const OrderPage = () => {
         } else if (!userState?.phone || !userState.address || !userState.name || !userState.city) {
             setIsOpenModalUpdateInfo(true)
         } else {
+            dispatch(updateListOrderSelected());
             navigate('/payment');
         }
     }

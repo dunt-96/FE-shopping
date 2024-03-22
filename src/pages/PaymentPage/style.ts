@@ -15,7 +15,9 @@ export const WrapperStyleHeader = styled.div`
 `
 
 export const WrapperLeft = styled.div`
-  flex: 6;
+  // flex: 6;
+  margin-right: 20px;
+  width: 100%;
 `
 
 export const WrapperListOrder = styled.div`
@@ -45,11 +47,10 @@ export const WrapperCountOrder = styled.div`
 `
 
 export const WrapperRight = styled.div`
-  width: 100%;
+  width: 40%;
   margin-left: 20px;
   display: flex ;
-  flex:2;
-  // z-index: 3;
+  // flex: 2;
   flex-direction: column; 
   gap: 10px; 
   align-items: center

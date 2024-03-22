@@ -11,6 +11,7 @@ export interface OrderInterface {
 }
 
 const orderItems: OrderInterface[] = []
+const orderItemsSelected: OrderInterface[] = []
 
 const listIdChecked: string[] = []
 
@@ -31,7 +32,8 @@ const initialState = {
     deliveredAt: '',
     deliveredFee: 0,
     priceIncludeAll: 0,
-    listIdChecked: listIdChecked
+    listIdChecked: listIdChecked,
+    orderItemsSelected: orderItemsSelected,
 }
 
 const calcDeliveryFee = (totalPrice) => {
@@ -63,6 +65,9 @@ const orderSlice = createSlice({
             state.totalPrice = 0;
             state.deliveredFee = 0;
             state.discount = 0;
+        },
+        updateListOrderSelected: (state) => {
+            state.orderItemsSelected = state.orderItems.filter((ord) => state.listIdChecked.includes(ord.product));
         },
         calcPrice: (state) => {
             const listIdProd = state.listIdChecked;
@@ -153,7 +158,7 @@ const orderSlice = createSlice({
 })
 
 
-export const { addOrderProduct, updateListChecked, resetAllPrice, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, calcPrice } = orderSlice.actions;
+export const { addOrderProduct, updateListChecked, updateListOrderSelected ,resetAllPrice, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, calcPrice } = orderSlice.actions;
 
 export const orderState = (state: RootState) => state.order;
 
