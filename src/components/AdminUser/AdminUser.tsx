@@ -12,7 +12,7 @@ import { getBase64 } from '../../utils';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
 import InputComponent from '../InputComponent/InputComponent';
 import { Loading } from '../Loading/Loading';
-import ModelComponent from '../ModelComponet/ModelComponent';
+import ModalComponent from '../ModelComponet/ModelComponent';
 import TableComponent from '../TableComponent/TableComponent';
 import { WrapperFormItem, WrapperHeader, WrapperUploadFile } from "./style";
 
@@ -28,7 +28,7 @@ const AdminUser = () => {
     const [listIdsDelete, setListIdsDelete] = useState([]);
 
     const fetchAllUser = async () => {
-        const res = await UserService.getAllUser();
+        const res = await UserService.getAllUser(user.access_token);
 
         return res?.data;
     }
@@ -529,7 +529,7 @@ const AdminUser = () => {
                     }
                 }} />
             </div>
-            <ModelComponent forceRender title="Tạo tai khoan" open={isModalOpen} footer={null} onOk={handleOk} onCancel={handleCancel}  >
+            <ModalComponent forceRender title="Tạo tai khoan" open={isModalOpen} footer={null} onOk={handleOk} onCancel={handleCancel}  >
                 <Loading isLoading={isPending}>
                     <Form
                         name="basic"
@@ -616,7 +616,7 @@ const AdminUser = () => {
                         </Form.Item>
                     </Form>
                 </Loading>
-            </ModelComponent>
+            </ModalComponent>
             <DrawerComponent open={open} onClose={onClose} title="Chi tiết tài khoản" width="500px">
                 <Loading isLoading={isLoadingUpdate}>
                     <Form
@@ -692,11 +692,11 @@ const AdminUser = () => {
                     </Form>
                 </Loading>
             </DrawerComponent>
-            <ModelComponent forceRender title="Xoá tài khoản" open={isModalOpenDelete} onOk={handleClickOkDeleteUser} onCancel={handleCancelDeleteModal}  >
+            <ModalComponent forceRender title="Xoá tài khoản" open={isModalOpenDelete} onOk={handleClickOkDeleteUser} onCancel={handleCancelDeleteModal}  >
                 <Loading isLoading={isDeleteManyUser ? isPendingDeleteMany : isPendingDeleteUser}>
                     <div>Bạn có chắc muốn xoá {isDeleteManyUser ? "những" : ''} tài khoản này không ?</div>
                 </Loading>
-            </ModelComponent>
+            </ModalComponent>
         </div>
     )
 }

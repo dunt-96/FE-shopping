@@ -14,7 +14,7 @@ import { getBase64, renderOptions } from '../../utils';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
 import InputComponent from '../InputComponent/InputComponent';
 import { Loading } from '../Loading/Loading';
-import ModelComponent from '../ModelComponet/ModelComponent';
+import ModalComponent from '../ModelComponet/ModelComponent';
 import TableComponent from '../TableComponent/TableComponent';
 import { WrapperFormItem, WrapperHeader, WrapperUploadFile } from "./style";
 
@@ -567,7 +567,7 @@ const AdminProduct = () => {
                     }
                 }} />
             </div>
-            <ModelComponent title="Tạo sản phẩm" forceRender open={isModalOpen} footer={null} onOk={handleOk} onCancel={handleCancel}  >
+            <ModalComponent title="Tạo sản phẩm" forceRender open={isModalOpen} footer={null} onOk={handleOk} onCancel={handleCancel}  >
                 <Loading isLoading={isPending}>
                     <Form
                         name="basic"
@@ -671,7 +671,7 @@ const AdminProduct = () => {
                         </Form.Item>
                     </Form>
                 </Loading>
-            </ModelComponent>
+            </ModalComponent>
             <DrawerComponent open={open} onClose={onClose} title="Chi tiết sản phẩm" width="500px">
                 <Loading isLoading={isLoadingUpdate}>
                     <Form
@@ -760,11 +760,11 @@ const AdminProduct = () => {
                     </Form>
                 </Loading>
             </DrawerComponent>
-            <ModelComponent forceRender title="Xoá sản phẩm" open={isModalOpenDelete} onOk={handleClickOkDeleteProduct} onCancel={handleCancelDeleteModal}  >
+            <ModalComponent forceRender title="Xoá sản phẩm" open={isModalOpenDelete} onOk={handleClickOkDeleteProduct} onCancel={handleCancelDeleteModal}  >
                 <Loading isLoading={isDeleteManyProducts ? isPendingDeleteMany : isPendingDeleteProd}>
                     <div>Bạn có chắc muốn xoá {isDeleteManyProducts ? "những" : ''} sản phẩm này không ?</div>
                 </Loading>
-            </ModelComponent>
+            </ModalComponent>
         </div>
     )
 }

@@ -24,9 +24,13 @@ const getDetailsUser = async (userId, access_token) => {
     }
 }
 
-const getAllUser = async () => {
+const getAllUser = async (access_token) => {
     try {
-        const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/user/get-all`);
+        const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/user/get-all`, {
+            headers: {
+                token: `Bearer ${access_token}`,
+            }
+        });
 
         return res;
     } catch (error) {
