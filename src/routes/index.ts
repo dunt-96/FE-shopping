@@ -1,6 +1,7 @@
 import HomePage from "../pages/HomePage/HomePage";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 import OrderPage from "../pages/OrderPage/OrderPage";
+import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 import ProductPage from "../pages/ProductsPage/ProductPage";
 import { ProfilePage } from "../pages/Profile/ProfilePage";
@@ -64,6 +65,12 @@ const routes = [
         page: SystemAminPage,
         isShowHeader: false,
         isPrivate: true,
+    },
+    {
+        path: '/payment',
+        page: PaymentPage,
+        isShowHeader: true,
+        isPrivate: false,
     },
     {
         path: '*',

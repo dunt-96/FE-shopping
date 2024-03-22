@@ -16,7 +16,7 @@ import UserService from '../../services/UserService';
 import { convertPrice } from '../../utils';
 import { WrapperCountOrder, WrapperInfo, WrapperInputNumber, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperTotal } from './style';
 
-const OrderPage = () => {
+const PaymentPage = () => {
     const order = useAppSelector((state) => state.order);
     const userState = useAppSelector((state) => state.user);
     const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false)
@@ -46,6 +46,10 @@ const OrderPage = () => {
     )
 
     const { isPending, data } = mutationUpdate
+
+    const handleChangeAddress = () => {
+        setIsOpenModalUpdateInfo(true)
+    }
 
     const handleUpdateInfoUser = () => {
         const { name, address, city, phone } = stateUserDetails
@@ -129,7 +133,7 @@ const OrderPage = () => {
         } else if (!userState?.phone || !userState.address || !userState.name || !userState.city) {
             setIsOpenModalUpdateInfo(true)
         } else {
-            navigate('/payment');
+            // navigate('/payment')
         }
     }
 
@@ -144,14 +148,9 @@ const OrderPage = () => {
         setIsOpenModalUpdateInfo(false)
     }
 
-    const handleChangeAddress = () => {
-        setIsOpenModalUpdateInfo(true)
-    }
-
     return (
         <div style={{ background: '#f5f5fa', alignContent: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: 'calc(100vh - 84px)', paddingTop: '10px' }}>
             <div style={{ height: '100%', width: '2150px', margin: '0 auto', display: 'flex', justifyContent: 'center', }}>
-                <h3>chọn phương thức thanh toán</h3>
                 <div style={{ display: 'flex', padding: '0 20px', justifyContent: 'center', height: '100%', width: '80%', flexDirection: 'row' }}>
                     <WrapperLeft>
                         <WrapperStyleHeader>
@@ -300,4 +299,4 @@ const OrderPage = () => {
     )
 }
 
-export default OrderPage
+export default PaymentPage
