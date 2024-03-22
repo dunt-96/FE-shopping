@@ -67,7 +67,10 @@ const PaymentPage = () => {
             }, {
                 onSuccess: () => {
                     message.success('Đặt hàng thành công');
-                }
+                },
+                onError: () => {
+                    message.error('Đặt hàng thất bại');
+                },
             })
     }
 
@@ -236,7 +239,6 @@ const PaymentPage = () => {
                             </div>
                             <ButtonComponent
                                 onClick={() => handleAddOrder()}
-                                // size={40}
                                 styleBtn={{
                                     background: 'rgb(255, 57, 69)',
                                     height: '48px',
@@ -244,7 +246,7 @@ const PaymentPage = () => {
                                     border: 'none',
                                     borderRadius: '4px',
                                 }}
-                                textBtn={'Mua hàng'}
+                                textBtn={'Đặt hàng'}
                                 styleTextBtn={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
                             ></ButtonComponent>
                         </WrapperRight>
