@@ -1,4 +1,4 @@
-import { InputNumber } from "antd";
+import { InputNumber, Radio } from "antd";
 import styled from "styled-components";
 
 export const WrapperStyleHeader = styled.div`
@@ -91,4 +91,25 @@ export const WrapperInputNumber = styled(InputNumber)`
     & .ant-input-number-handler-wrap {
         display: none;
     }
+`
+
+export const Label = styled.span`
+  font-size: 12px;
+  color: #000;
+  font-weight: bold
+`
+
+export const WrapperRadio = styled(Radio.Group)`
+  margin-top: 6px;
+  background: rgb(240, 248, 255);
+  border: 1px solid rgb(194, 225, 255);
+  width: 500px;
+  border-radius: 4px;
+  height: 100px;
+  padding: 16px;
+  font-weight: normal;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
 `

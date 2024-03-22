@@ -1,5 +1,4 @@
-import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { Checkbox, Form } from 'antd';
+import { Form, Radio } from 'antd';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -14,13 +13,15 @@ import { calcPrice, decreaseAmount, increaseAmount, removeAllOrderProduct, remov
 import { updateUser } from '../../redux/slices/userSlice';
 import UserService from '../../services/UserService';
 import { convertPrice } from '../../utils';
-import { WrapperCountOrder, WrapperInfo, WrapperInputNumber, WrapperItemOrder, WrapperLeft, WrapperListOrder, WrapperRight, WrapperStyleHeader, WrapperTotal } from './style';
+import { Label, WrapperInfo, WrapperLeft, WrapperRadio, WrapperRight, WrapperTotal } from './style';
 
 const PaymentPage = () => {
     const order = useAppSelector((state) => state.order);
     const userState = useAppSelector((state) => state.user);
     const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false)
     const navigate = useNavigate();
+    const [delivery, setDelivery] = useState('fast');
+    const [payment, setPayment] = useState('later_money');
 
     // const [listChecked, setListChecked] = useState<string[]>(order.listIdChecked);
     const dispatch = useDispatch()
@@ -148,59 +149,37 @@ const PaymentPage = () => {
         setIsOpenModalUpdateInfo(false)
     }
 
+    const handleDelivery = (e) => {
+        setDelivery(e.target.value)
+    }
+
+    const handlePayment = (e) => {
+        setPayment(e.target.value)
+    }
+
     return (
         <div style={{ background: '#f5f5fa', alignContent: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: 'calc(100vh - 84px)', paddingTop: '10px' }}>
             <div style={{ height: '100%', width: '2150px', margin: '0 auto', display: 'flex', justifyContent: 'center', }}>
                 <div style={{ display: 'flex', padding: '0 20px', justifyContent: 'center', height: '100%', width: '80%', flexDirection: 'row' }}>
                     <WrapperLeft>
-                        <WrapperStyleHeader>
-                            <span style={{ display: 'inline-block', width: '390px' }}>
-                                <Checkbox onChange={handleOnchangeCheckAll} checked={!(order.orderItems.length === 0) && order.listIdChecked?.length === order?.orderItems?.length}></Checkbox>
-                                <span> Tất cả ({order?.orderItems?.length} sản phẩm)</span>
-                            </span>
-                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <span>Đơn giá</span>
-                                <span>Số lượng</span>
-                                <span>Thành tiền</span>
-                                <DeleteOutlined style={{ cursor: 'pointer' }} onClick={handleRemoveAllOrder} />
+                        <WrapperInfo>
+                            <div>
+                                <Label>Chọn phương thức giao hàng</Label>
+                                <WrapperRadio onChange={handleDelivery} value={delivery}>
+                                    <Radio value="fast"><span style={{ color: '#ea8500', fontWeight: 'bold' }}>FAST</span> Giao hàng tiết kiệm</Radio>
+                                    <Radio value="gojek"><span style={{ color: '#ea8500', fontWeight: 'bold' }}>GO_JEK</span> Giao hàng tiết kiệm</Radio>
+                                </WrapperRadio>
                             </div>
-                        </WrapperStyleHeader>
-                        <WrapperListOrder>
-                            {order?.orderItems?.map((ord) => {
-                                return (
-                                    <WrapperItemOrder>
-                                        <div style={{ width: '390px', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                            <Checkbox onChange={onChange} value={ord?.product} checked={order.listIdChecked?.includes(ord.product)}></Checkbox>
-                                            <img src={ord?.image} style={{ marginLeft: '10px', marginRight: '10px', width: '77px', height: '79px', objectFit: 'cover', borderRadius: '5px' }} />
-                                            <div style={{
-                                                width: 260,
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                whiteSpace: 'nowrap',
-                                                fontWeight: '600',
-                                                fontSize: '20px'
-                                            }}>{ord?.name}</div>
-                                        </div>
-                                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <span>
-                                                <span style={{ fontSize: '14px', color: '#242424', fontWeight: '600' }}>{convertPrice(ord?.price)}</span>
-                                            </span>
-                                            <WrapperCountOrder>
-                                                <button style={{ flex: 1, border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease', ord?.product)}>
-                                                    <MinusOutlined style={{ color: '#000', fontSize: '10px' }} />
-                                                </button>
-                                                <WrapperInputNumber defaultValue={ord?.amount} value={ord?.amount} size="small" />
-                                                <button style={{ flex: 1, border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', ord?.product)}>
-                                                    <PlusOutlined style={{ color: '#000', fontSize: '10px' }} />
-                                                </button>
-                                            </WrapperCountOrder>
-                                            <span style={{ color: 'rgb(255, 66, 78)', fontSize: '13px', fontWeight: 500 }}>{convertPrice(ord!.price * ord?.amount)}</span>
-                                            <DeleteOutlined style={{ cursor: 'pointer' }} onClick={() => handleDeleteOrder(ord?.product)} />
-                                        </div>
-                                    </WrapperItemOrder>
-                                )
-                            })}
-                        </WrapperListOrder>
+                        </WrapperInfo>
+                        <WrapperInfo>
+                            <div>
+                                <Label>Chọn phương thức thanh toán</Label>
+                                <WrapperRadio onChange={handlePayment} value={payment}>
+                                    <Radio value="later_money"> Thanh toán tiền mặt khi nhận hàng</Radio>
+                                    <Radio value="paypal"> Thanh toán tiền bằng paypal</Radio>
+                                </WrapperRadio>
+                            </div>
+                        </WrapperInfo>
                     </WrapperLeft>
                     <WrapperRight>
                         <div style={{ width: '100%' }}>
