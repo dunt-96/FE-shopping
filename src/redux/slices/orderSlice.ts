@@ -12,6 +12,8 @@ export interface OrderInterface {
 
 const orderItems: OrderInterface[] = []
 
+const listIdChecked: string[] = []
+
 const initialState = {
     orderItems,
     shippingAddress: {
@@ -29,7 +31,7 @@ const initialState = {
     deliveredAt: '',
     deliveredFee: 0,
     priceIncludeAll: 0,
-    listIdChecked:[]
+    listIdChecked: listIdChecked
 }
 
 const calcDeliveryFee = (totalPrice) => {
@@ -52,15 +54,18 @@ const orderSlice = createSlice({
             } else {
                 state.orderItems.push(orderItem)
             }
-            state.totalPrice = state.totalPrice + orderItem.price;
-            state.discount = state.discount + orderItem.discount;
-
-            state.deliveredFee = calcDeliveryFee(state.totalPrice);
-            state.priceIncludeAll = calcLastPrice(state.totalPrice, state.deliveredFee, state.discount);
         },
-        calcPrice: (state, action) => {
-            const listIdProd = action.payload;
-            console.log('list prod99999', listIdProd);
+        updateListChecked: (state, action) => {
+            state.listIdChecked = action.payload;
+        },
+        resetAllPrice: (state) => {
+            state.priceIncludeAll = 0;
+            state.totalPrice = 0;
+            state.deliveredFee = 0;
+            state.discount = 0;
+        },
+        calcPrice: (state) => {
+            const listIdProd = state.listIdChecked;
             state.listIdChecked = listIdProd;
             if (listIdProd.length === 0) {
                 console.log('run here');
@@ -89,22 +94,28 @@ const orderSlice = createSlice({
             const itemOrder = state?.orderItems?.find((item) => item?.product === idProduct);
             itemOrder!.amount++;
 
-            state.totalPrice = state.totalPrice + itemOrder!.price;
-            state.discount = state.discount + itemOrder!.discount;
+            if (state.listIdChecked.includes(idProduct)) {
+                state.totalPrice = state.totalPrice + itemOrder!.price;
+                state.discount = state.discount + itemOrder!.discount;
 
-            state.deliveredFee = calcDeliveryFee(state.totalPrice);
-            state.priceIncludeAll = calcLastPrice(state.totalPrice, state.deliveredFee, state.discount);
+                state.deliveredFee = calcDeliveryFee(state.totalPrice);
+                state.priceIncludeAll = calcLastPrice(state.totalPrice, state.deliveredFee, state.discount);
+            }
+
         },
         decreaseAmount: (state, action) => {
             const { idProduct } = action.payload
             const itemOrder = state?.orderItems?.find((item) => item?.product === idProduct)
             itemOrder!.amount--;
 
-            state.totalPrice = state.totalPrice - itemOrder!.price;
-            state.discount = state.discount - itemOrder!.discount;
+            if (state.listIdChecked?.includes(idProduct)) {
+                state.totalPrice = state.totalPrice - itemOrder!.price;
+                state.discount = state.discount - itemOrder!.discount;
 
-            state.deliveredFee = calcDeliveryFee(state.totalPrice);
-            state.priceIncludeAll = calcLastPrice(state.totalPrice, state.deliveredFee, state.discount);
+                state.deliveredFee = calcDeliveryFee(state.totalPrice);
+                state.priceIncludeAll = calcLastPrice(state.totalPrice, state.deliveredFee, state.discount);
+            }
+
         },
         removeOrderProduct: (state, action) => {
             const { idProduct } = action.payload
@@ -126,10 +137,10 @@ const orderSlice = createSlice({
                 state.discount = 0;
             }
         },
-        removeAllOrderProduct: (state, action) => {
-            const { listChecked } = action.payload;
-            const itemOrders = state?.orderItems?.filter((item) => !listChecked.includes(item.product));
-            state.orderItems = itemOrders;
+        removeAllOrderProduct: (state) => {
+            // const { listChecked } = action.payload;
+            // const itemOrders = state?.orderItems?.filter((item) => !state.listIdChecked.includes(item.product));
+            state.orderItems = [];
             state.totalPrice = 0;
             state.discount = 0;
 
@@ -142,7 +153,7 @@ const orderSlice = createSlice({
 })
 
 
-export const { addOrderProduct, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, calcPrice } = orderSlice.actions;
+export const { addOrderProduct, updateListChecked, resetAllPrice, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, calcPrice } = orderSlice.actions;
 
 export const orderState = (state: RootState) => state.order;
 

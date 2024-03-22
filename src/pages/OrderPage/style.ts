@@ -15,7 +15,7 @@ export const WrapperStyleHeader = styled.div`
 `
 
 export const WrapperLeft = styled.div`
-  width: 910px;
+  flex: 6;
 `
 
 export const WrapperListOrder = styled.div`
@@ -45,9 +45,11 @@ export const WrapperCountOrder = styled.div`
 `
 
 export const WrapperRight = styled.div`
-  width: 320px;
+  width: 100%;
   margin-left: 20px;
   display: flex ;
+  flex:2;
+  // z-index: 3;
   flex-direction: column; 
   gap: 10px; 
   align-items: center
@@ -57,7 +59,7 @@ export const WrapperInfo = styled.div`
     display: flex;
     flex-direction: column;
     gap: 15px;
-    padding: 17px 20px;
+    padding: 30px 40px;
     border-bottom: 1px solid #f5f5f5;
     background: #fff;
     border-top-right-radius: 6px;
@@ -71,7 +73,7 @@ export const WrapperTotal = styled.div`
     align-items: center; 
     width: 100%;
     justify-content: space-between;
-    padding: 17px 20px;
+    padding: 30px 40px;
     background: #fff ;
     border-bottom-right-radius: 6px;
     border-bottom-left-radius: 6px;

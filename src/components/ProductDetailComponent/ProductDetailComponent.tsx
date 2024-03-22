@@ -79,7 +79,7 @@ const ProductDetailComponent = ({ productId }) => {
   }
 
   return (
-    <Row style={{ background: '#fff', padding: '16px', borderRadius: '4px' }}>
+    <Row style={{ background: '#fff', width: '100%', padding: '16px', borderRadius: '4px' }}>
       <Col span={10} style={{ borderRight: '1px solid #e5e5e5', paddingRight: '10px' }}>
         <Image src={product?.image} alt='image product' preview={false} />
         <Row style={{ marginTop: '10px', justifyContent: 'space-between' }}>
