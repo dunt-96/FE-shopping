@@ -8,7 +8,7 @@ import { Loading } from '../../components/Loading/Loading';
 import ModalComponent from '../../components/ModelComponet/ModelComponent';
 import { useMutationHook } from '../../hooks/mutationHook';
 import { useAppSelector } from '../../redux/hooks';
-import { calcPrice, decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct, updateListChecked } from '../../redux/slices/orderSlice';
+import { updateListOrderSelected } from '../../redux/slices/orderSlice';
 import { updateUser } from '../../redux/slices/userSlice';
 import OrderService from '../../services/OrderService';
 import { convertPrice } from '../../utils';
@@ -51,27 +51,39 @@ const PaymentPage = () => {
             && userState.city
             && order.priceIncludeAll
             && userState.id
-        )
-            mutationAddOrder.mutate({
-                token: userState.access_token,
-                orderItems: order.orderItemsSelected,
-                fullName: userState.name,
-                address: userState.address,
-                city: userState.city,
-                phone: userState.phone,
-                totalPrice: order.priceIncludeAll,
-                shippingPrice: order.deliveredFee,
-                paymentMethod: payment,
-                itemPrice: order.totalPrice,
-                user: userState.id,
-            }, {
-                onSuccess: () => {
-                    message.success('Đặt hàng thành công');
+        ) {
+            console.log('asdasda');
+            mutationAddOrder.mutate(
+                {
+                    token: userState.access_token,
+                    orderItems: order.orderItemsSelected,
+                    fullName: userState.name,
+                    address: userState.address,
+                    city: userState.city,
+                    phone: userState.phone,
+                    totalPrice: order.priceIncludeAll,
+                    shippingPrice: order.deliveredFee,
+                    paymentMethod: payment,
+                    itemPrice: order.totalPrice,
+                    user: userState.id,
                 },
-                onError: () => {
-                    message.error('Đặt hàng thất bại');
-                },
-            })
+                {
+                    onSuccess: () => {
+                        message.success('Đặt hàng thành công');
+                        setTimeout((time) => {
+                            navigate('/orderSuccess', {
+                                state: {
+                                    delivery,
+                                    payment,
+                                    orders: order.orderItemsSelected
+                                }
+                            });
+                        }, 1000)
+                    }
+                }
+            )
+            dispatch(updateListOrderSelected)
+        }
     }
 
     const { isPending, data } = mutationAddOrder;
@@ -96,67 +108,12 @@ const PaymentPage = () => {
         }
     }
 
-    const onChange = (e) => {
-        if (order?.listIdChecked.includes(e.target.value)) {
-            const newListChecked = order?.listIdChecked.filter((item) => item !== e.target.value)
-            dispatch(updateListChecked(newListChecked));
-            handleCalcPrice();
-        } else {
-            dispatch(updateListChecked([...order.listIdChecked, e.target.value]));
-            handleCalcPrice();
-        }
-    };
-
-    const handleChangeCount = (type, idProduct) => {
-        if (type === 'increase') {
-            dispatch(increaseAmount({ idProduct }))
-        } else {
-            dispatch(decreaseAmount({ idProduct }))
-        }
-    }
-
-    const handleDeleteOrder = (idProduct) => {
-        dispatch(removeOrderProduct({ idProduct }))
-    }
-
-    const handleOnchangeCheckAll = (e) => {
-        if (order.orderItems.length === 0) {
-            return;
-        }
-        if (e.target.checked) {
-            let newListChecked: string[] = [];
-            order?.orderItems?.forEach((item) => {
-                newListChecked.push(item.product);
-            })
-            dispatch(updateListChecked([...newListChecked]));
-            handleCalcPrice();
-
-        } else {
-            dispatch(updateListChecked([]));
-            handleCalcPrice();
-        }
-
-    }
-
     const handleOnchangeDetails = (e) => {
         setStateUserDetails({
             ...stateUserDetails,
             [e.target.name]: e.target.value
         })
     }
-
-
-    const handleCalcPrice = () => {
-        dispatch(calcPrice());
-    }
-
-    const handleRemoveAllOrder = () => {
-        if ((order.listIdChecked?.length ?? 0) >= 1) {
-            dispatch(removeAllOrderProduct())
-        }
-    }
-
-
 
     const handleCancelUpdate = () => {
         setStateUserDetails({

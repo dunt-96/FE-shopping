@@ -152,7 +152,6 @@ const OrderPage = () => {
     return (
         <div style={{ background: '#f5f5fa', alignContent: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: 'calc(100vh - 84px)', paddingTop: '10px' }}>
             <div style={{ height: '100%', width: '2150px', margin: '0 auto', display: 'flex', justifyContent: 'center', }}>
-                <h3>chọn phương thức thanh toán</h3>
                 <div style={{ display: 'flex', padding: '0 20px', justifyContent: 'center', height: '100%', width: '80%', flexDirection: 'row' }}>
                     <WrapperLeft>
                         <WrapperStyleHeader>

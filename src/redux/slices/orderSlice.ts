@@ -2,12 +2,26 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 export interface OrderInterface {
+    // name: product?.name,
+    //   amount: quantity,
+    //   image: product?.image,
+    //   price: product?.price,
+    //   product: product?._id,
+    //   discount: product.discount,
+    //   rating: product?.rating,
+    //   countInStock: product.countInStock,
+    //   type: product.type,
+    //   selled: product.selled,
     name: string,
     amount: number,
     image: string,
     price: number,
     product: string,
-    discount: number
+    discount: number,
+    rating: number,
+    countInStock: number,
+    type: string,
+    selled: number,
 }
 
 const orderItems: OrderInterface[] = []
@@ -67,6 +81,10 @@ const orderSlice = createSlice({
             state.discount = 0;
         },
         updateListOrderSelected: (state) => {
+            // const listOrderSelect = action.payload;
+            // if(listOrderSelect){
+            //     state.orderItemsSelected = listOrderSelect;
+            // }
             state.orderItemsSelected = state.orderItems.filter((ord) => state.listIdChecked.includes(ord.product));
         },
         calcPrice: (state) => {
@@ -158,7 +176,7 @@ const orderSlice = createSlice({
 })
 
 
-export const { addOrderProduct, updateListChecked, updateListOrderSelected ,resetAllPrice, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, calcPrice } = orderSlice.actions;
+export const { addOrderProduct, updateListChecked, updateListOrderSelected, resetAllPrice, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, calcPrice } = orderSlice.actions;
 
 export const orderState = (state: RootState) => state.order;
 

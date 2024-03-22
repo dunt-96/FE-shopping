@@ -1,6 +1,7 @@
 import HomePage from "../pages/HomePage/HomePage";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 import OrderPage from "../pages/OrderPage/OrderPage";
+import OrderSuccessPage from "../pages/OrderSuccess/OrderSuccess";
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 import ProductPage from "../pages/ProductsPage/ProductPage";
@@ -69,6 +70,12 @@ const routes = [
     {
         path: '/payment',
         page: PaymentPage,
+        isShowHeader: true,
+        isPrivate: false,
+    },
+    {
+        path: '/orderSuccess',
+        page: OrderSuccessPage,
         isShowHeader: true,
         isPrivate: false,
     },

@@ -4,12 +4,14 @@ import {
   StarFilled
 } from '@ant-design/icons'
 import { useQuery } from '@tanstack/react-query'
-import { Col, Image, Row } from 'antd'
+import { Col, Image, Row, message } from 'antd'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Anh from '../../assets/images/anh.jpg'
+import { useMutationHook } from '../../hooks/mutationHook'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { addOrderProduct } from '../../redux/slices/orderSlice'
+import CartService from '../../services/CartService'
 import ProductService from '../../services/ProductService'
 import { convertPrice } from '../../utils'
 import ButtonComponent from '../ButtonComponent/ButtonComponent'
@@ -71,12 +73,52 @@ const ProductDetailComponent = ({ productId }) => {
           image: product?.image,
           price: product?.price,
           product: product?._id,
-          discount: product.discount
+          discount: product.discount,
+          rating: product?.rating,
+          countInStock: product.countInStock,
+          type: product.type,
+          selled: product.selled,
         }
-      }))
-    }
+      }));
 
+      handleAddCartToDB();
+    }
   }
+
+
+  const mutationCreateCart = useMutationHook(
+    async (data) => {
+      const res = await CartService.createCart(data);
+      return res.data;
+    }
+  )
+
+  const { isPending: createCartPending, data: createCartData } = mutationCreateCart;
+
+  const handleAddCartToDB = () => {
+    mutationCreateCart.mutate(
+      {
+        name: product?.name,
+        amount: quantity,
+        image: product?.image,
+        price: product?.price,
+        product: product?._id,
+        discount: product.discount,
+        rating: product?.rating,
+        countInStock: product.countInStock,
+        type: product.type,
+        selled: product.selled,
+        user: user.id
+      },
+      {
+        onSuccess: (val) => {
+          message.success('Thêm vào giỏ hàng thành công');
+        }
+      }
+    );
+  }
+
+
 
   return (
     <Row style={{ background: '#fff', width: '100%', padding: '16px', borderRadius: '4px' }}>
