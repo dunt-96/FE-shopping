@@ -28,7 +28,17 @@ const getAllItems = async (searchString = '', limit = 0) => {
     }
 }
 
+const deleteItemInCart = async (productId: string) => {
+    try {
+        const res = await axios.delete(`${process.env.REACT_APP_API_URL}/cart/delete/${productId}`);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export default {
     createCart,
-    getAllItems
+    getAllItems,
+    deleteItemInCart
 }

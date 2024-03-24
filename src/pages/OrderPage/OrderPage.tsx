@@ -1,7 +1,7 @@
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { Checkbox, Form } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
@@ -11,7 +11,7 @@ import * as message from '../../components/Message/Message';
 import ModalComponent from '../../components/ModelComponet/ModelComponent';
 import { useMutationHook } from '../../hooks/mutationHook';
 import { useAppSelector } from '../../redux/hooks';
-import { calcPrice, decreaseAmount, increaseAmount, removeAllOrderProduct, removeOrderProduct, updateListChecked, updateListOrderSelected } from '../../redux/slices/orderSlice';
+import { calcPrice, decreaseAmount, increaseAmount, removeAllOrderProduct, updateListChecked, updateListOrderItems, updateListOrderSelected } from '../../redux/slices/orderSlice';
 import { updateUser } from '../../redux/slices/userSlice';
 import CartService from '../../services/CartService';
 import UserService from '../../services/UserService';
@@ -50,11 +50,12 @@ const OrderPage = () => {
 
     const { isLoading: isLoadingCart, data: listItemsInCart, isSuccess } = queryCart;
 
-    // useEffect(() => {
-    //     dispatch(updateListItemOrder(listItemsInCart))
-    // }, [isSuccess])
+    useEffect(() => {
+        if (isSuccess && listItemsInCart.status === "OK") {
+            dispatch(updateListOrderItems(listItemsInCart.data))
+        }
+    }, [isSuccess, listItemsInCart])
 
-    console.log('list item in cart', listItemsInCart);
 
     const mutationUpdate = useMutationHook(
         (data) => {
@@ -105,8 +106,16 @@ const OrderPage = () => {
         }
     }
 
+    const deleteFromDB = async (idProduct: string) => {
+        const res = await CartService.deleteItemInCart(idProduct);
+        if (res.status === "OK") {
+            message.success('Xoá sản phẩm thành công');
+            queryCart.refetch();
+        }
+    }
+
     const handleDeleteOrder = (idProduct) => {
-        dispatch(removeOrderProduct({ idProduct }))
+        deleteFromDB(idProduct);
     }
 
     const handleOnchangeCheckAll = (e) => {
@@ -171,6 +180,8 @@ const OrderPage = () => {
     const handleChangeAddress = () => {
         setIsOpenModalUpdateInfo(true)
     }
+
+    console.log('order irsm00000', order.orderItems);
 
     return (
         <div style={{ background: '#f5f5fa', alignContent: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: 'calc(100vh - 84px)', paddingTop: '10px' }}>

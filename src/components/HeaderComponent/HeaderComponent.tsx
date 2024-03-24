@@ -32,6 +32,8 @@ const HeaderComponent = (props) => {
     const [name, setName] = useState('');
     const [avatar, setAvatar] = useState('');
 
+    console.log('order item', orderState.orderItems);
+
     const handleLogout = async () => {
         setLoading(true);
         await UserService.logout();

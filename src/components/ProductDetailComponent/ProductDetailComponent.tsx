@@ -66,20 +66,20 @@ const ProductDetailComponent = ({ productId }) => {
       navigate('/sign-in', { state: location?.pathname });
     }
     else {
-      dispatch(addOrderProduct({
-        orderItem: {
-          name: product?.name,
-          amount: quantity,
-          image: product?.image,
-          price: product?.price,
-          product: product?._id,
-          discount: product.discount,
-          rating: product?.rating,
-          countInStock: product.countInStock,
-          type: product.type,
-          selled: product.selled,
-        }
-      }));
+      // dispatch(addOrderProduct({
+      //   orderItem: {
+      //     name: product?.name,
+      //     amount: quantity,
+      //     image: product?.image,
+      //     price: product?.price,
+      //     product: product?._id,
+      //     discount: product.discount,
+      //     rating: product?.rating,
+      //     countInStock: product.countInStock,
+      //     type: product.type,
+      //     selled: product.selled,
+      //   }
+      // }));
 
       handleAddCartToDB();
     }
@@ -113,6 +113,7 @@ const ProductDetailComponent = ({ productId }) => {
       {
         onSuccess: (val) => {
           message.success('Thêm vào giỏ hàng thành công');
+          dispatch(addOrderProduct(val));
         }
       }
     );

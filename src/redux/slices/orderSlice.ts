@@ -22,6 +22,8 @@ export interface OrderInterface {
     countInStock: number,
     type: string,
     selled: number,
+    user: string,
+    _id: string
 }
 
 const orderItems: OrderInterface[] = []
@@ -63,7 +65,7 @@ const orderSlice = createSlice({
     initialState: initialState,
     reducers: {
         addOrderProduct: (state, action) => {
-            const { orderItem } = action.payload
+            const orderItem = action.payload
             const itemOrder = state?.orderItems?.find((item) => item?.product === orderItem.product)
             if (itemOrder) {
                 itemOrder.amount += orderItem?.amount
@@ -91,7 +93,6 @@ const orderSlice = createSlice({
             const listIdProd = state.listIdChecked;
             state.listIdChecked = listIdProd;
             if (listIdProd.length === 0) {
-                console.log('run here');
                 state.priceIncludeAll = 0;
                 state.totalPrice = 0;
                 state.deliveredFee = 0;
@@ -172,11 +173,16 @@ const orderSlice = createSlice({
 
             state.listIdChecked = [];
         },
+        updateListOrderItems: (state, action) => {
+            const newList = action.payload;
+            console.log('new list', newList);
+            state.orderItems = newList;
+        }
     }
 })
 
 
-export const { addOrderProduct, updateListChecked, updateListOrderSelected, resetAllPrice, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, calcPrice } = orderSlice.actions;
+export const { addOrderProduct, updateListOrderItems, updateListChecked, updateListOrderSelected, resetAllPrice, increaseAmount, decreaseAmount, removeOrderProduct, removeAllOrderProduct, calcPrice } = orderSlice.actions;
 
 export const orderState = (state: RootState) => state.order;
 
