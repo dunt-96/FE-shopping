@@ -87,6 +87,11 @@ const OrderPage = () => {
         }
     }
 
+    useEffect(() => {
+        console.log('must be run here');
+        dispatch(calcPrice());
+    }, [order.listIdChecked])
+
     const onChange = (e) => {
         if (order?.listIdChecked.includes(e.target.value)) {
             const newListChecked = order?.listIdChecked.filter((item) => item !== e.target.value)

@@ -75,6 +75,7 @@ const orderSlice = createSlice({
         },
         updateListChecked: (state, action) => {
             state.listIdChecked = action.payload;
+            console.log('update list checked', state.listIdChecked);
         },
         resetAllPrice: (state) => {
             state.priceIncludeAll = 0;
@@ -91,7 +92,6 @@ const orderSlice = createSlice({
         },
         calcPrice: (state) => {
             const listIdProd = state.listIdChecked;
-            state.listIdChecked = listIdProd;
             if (listIdProd.length === 0) {
                 state.priceIncludeAll = 0;
                 state.totalPrice = 0;
@@ -175,8 +175,8 @@ const orderSlice = createSlice({
         },
         updateListOrderItems: (state, action) => {
             const newList = action.payload;
-            console.log('new list', newList);
             state.orderItems = newList;
+            state.listIdChecked = state.listIdChecked.filter((item) => (newList.map((val) => val.product).includes(item)))
         }
     }
 })
