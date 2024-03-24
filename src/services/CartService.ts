@@ -37,8 +37,20 @@ const deleteItemInCart = async (productId: string) => {
     }
 }
 
+const deleteManyItemsInCart = async (ids: string[]) => {
+    try {
+        const res = await axios.delete(`${process.env.REACT_APP_API_URL}/cart/delete-many`, {
+            data: ids,
+        });
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export default {
     createCart,
     getAllItems,
-    deleteItemInCart
+    deleteItemInCart,
+    deleteManyItemsInCart
 }

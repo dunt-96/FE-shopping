@@ -11,7 +11,7 @@ import * as message from '../../components/Message/Message';
 import ModalComponent from '../../components/ModelComponet/ModelComponent';
 import { useMutationHook } from '../../hooks/mutationHook';
 import { useAppSelector } from '../../redux/hooks';
-import { calcPrice, decreaseAmount, increaseAmount, removeAllOrderProduct, updateListChecked, updateListOrderItems, updateListOrderSelected } from '../../redux/slices/orderSlice';
+import { calcPrice, decreaseAmount, increaseAmount, updateListChecked, updateListOrderItems, updateListOrderSelected } from '../../redux/slices/orderSlice';
 import { updateUser } from '../../redux/slices/userSlice';
 import CartService from '../../services/CartService';
 import UserService from '../../services/UserService';
@@ -109,8 +109,10 @@ const OrderPage = () => {
     const deleteFromDB = async (idProduct: string) => {
         const res = await CartService.deleteItemInCart(idProduct);
         if (res.status === "OK") {
-            message.success('Xoá sản phẩm thành công');
+            message.success('Xoá sản hẩm thành công');
             queryCart.refetch();
+        } else {
+            message.success('Xoá sản phẩm thất bại');
         }
     }
 
@@ -149,9 +151,16 @@ const OrderPage = () => {
         dispatch(calcPrice());
     }
 
-    const handleRemoveAllOrder = () => {
+    const handleRemoveAllOrder = async () => {
         if ((order.listIdChecked?.length ?? 0) >= 1) {
-            dispatch(removeAllOrderProduct())
+            const res = await CartService.deleteManyItemsInCart(order.listIdChecked);
+            if (res.status === "OK") {
+                message.success('Xoá tất cả sản phẩm thành công');
+                queryCart.refetch();
+            } else {
+                message.success('Xoá tất cả sản phẩm thất bại');
+            }
+            // dispatch(removeAllOrderProduct())
         }
     }
 
