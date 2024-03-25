@@ -1,14 +1,13 @@
 import { Form, Radio, message } from 'antd';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import InputComponent from '../../components/InputComponent/InputComponent';
 import { Loading } from '../../components/Loading/Loading';
 import ModalComponent from '../../components/ModelComponet/ModelComponent';
 import { useMutationHook } from '../../hooks/mutationHook';
-import { useAppSelector } from '../../redux/hooks';
-import { updateListOrderSelected } from '../../redux/slices/orderSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { refetchCountItems, updateListOrderSelected } from '../../redux/slices/orderSlice';
 import { updateUser } from '../../redux/slices/userSlice';
 import OrderService from '../../services/OrderService';
 import { convertPrice } from '../../utils';
@@ -23,7 +22,7 @@ const PaymentPage = () => {
     const [payment, setPayment] = useState('later_money');
 
     // const [listChecked, setListChecked] = useState<string[]>(order.listIdChecked);
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     const [form] = Form.useForm();
 
     const [stateUserDetails, setStateUserDetails] = useState({
@@ -70,15 +69,16 @@ const PaymentPage = () => {
                 {
                     onSuccess: () => {
                         message.success('Đặt hàng thành công');
-                        setTimeout((time) => {
-                            navigate('/orderSuccess', {
-                                state: {
-                                    delivery,
-                                    payment,
-                                    orders: order.orderItemsSelected
-                                }
-                            });
-                        }, 1000)
+                        dispatch(refetchCountItems());
+                        // setTimeout((time) => {
+                        //     navigate('/orderSuccess', {
+                        //         state: {
+                        //             delivery,
+                        //             payment,
+                        //             orders: order.orderItemsSelected
+                        //         }
+                        //     });
+                        // }, 1000)
                     }
                 }
             )

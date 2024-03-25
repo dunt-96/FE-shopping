@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import CartService from "../../services/CartService";
 import { RootState } from "../store";
 
 export interface OrderInterface {
@@ -23,7 +24,8 @@ export interface OrderInterface {
     type: string,
     selled: number,
     user: string,
-    _id: string
+    _id: string,
+    itemsInCart,
 }
 
 const orderItems: OrderInterface[] = []
@@ -50,6 +52,7 @@ const initialState = {
     priceIncludeAll: 0,
     listIdChecked: listIdChecked,
     orderItemsSelected: orderItemsSelected,
+    itemsInCart: 0,
 }
 
 const calcDeliveryFee = (totalPrice) => {
@@ -59,6 +62,16 @@ const calcDeliveryFee = (totalPrice) => {
 const calcLastPrice = (totalPrice, deliveryFee, discount) => {
     return totalPrice - discount + deliveryFee;
 }
+
+export const refetchCountItems = createAsyncThunk(
+    'order/count/items/in/cart',
+    async () => {
+        const res = await CartService.countItemInCart();
+        console.log('refetchCountItems', res);
+
+        return res;
+    }
+)
 
 const orderSlice = createSlice({
     name: 'order',
@@ -75,7 +88,6 @@ const orderSlice = createSlice({
         },
         updateListChecked: (state, action) => {
             state.listIdChecked = action.payload;
-            console.log('update list checked', state.listIdChecked);
         },
         resetAllPrice: (state) => {
             state.priceIncludeAll = 0;
@@ -92,7 +104,7 @@ const orderSlice = createSlice({
         },
         calcPrice: (state) => {
             const listIdProd = state.listIdChecked;
-            if (listIdProd.length === 0) {
+            if (listIdProd?.length === 0) {
                 state.priceIncludeAll = 0;
                 state.totalPrice = 0;
                 state.deliveredFee = 0;
@@ -103,7 +115,7 @@ const orderSlice = createSlice({
                 state.deliveredFee = 0;
                 state.discount = 0;
 
-                listIdProd.forEach(element => {
+                listIdProd?.forEach(element => {
                     const itemOrder = state?.orderItems?.find((item) => item?.product === element);
                     state.totalPrice = state?.totalPrice + ((itemOrder?.price ?? 0) * (itemOrder?.amount ?? 0));
                     state.discount = state?.discount + ((itemOrder?.discount ?? 0) * (itemOrder?.amount ?? 0));
@@ -114,7 +126,7 @@ const orderSlice = createSlice({
             }
         },
         increaseAmount: (state, action) => {
-            const { idProduct } = action.payload;
+            const idProduct = action.payload;
             const itemOrder = state?.orderItems?.find((item) => item?.product === idProduct);
             itemOrder!.amount++;
 
@@ -128,7 +140,7 @@ const orderSlice = createSlice({
 
         },
         decreaseAmount: (state, action) => {
-            const { idProduct } = action.payload
+            const idProduct = action.payload
             const itemOrder = state?.orderItems?.find((item) => item?.product === idProduct)
             itemOrder!.amount--;
 
@@ -176,9 +188,15 @@ const orderSlice = createSlice({
         updateListOrderItems: (state, action) => {
             const newList = action.payload;
             state.orderItems = newList;
-            state.listIdChecked = state.listIdChecked.filter((item) => (newList.map((val) => val.product).includes(item)))
+            state.listIdChecked = state.listIdChecked?.filter((item) => (newList.map((val) => val.product).includes(item)))
         }
-    }
+    },
+    extraReducers(builder) {
+        builder.addCase(refetchCountItems.fulfilled, (state, action) => {
+            state.itemsInCart = action.payload.data;
+            // return action.payload;
+        })
+    },
 })
 
 

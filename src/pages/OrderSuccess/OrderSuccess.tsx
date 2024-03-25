@@ -10,7 +10,7 @@ const OrderSuccessPage = () => {
 
     const { state } = location;
 
-    console.log('location', location);
+    console.log('location', order.orderItemsSelected);
 
     return (
         <div style={{ background: '#f5f5fa', alignContent: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: 'calc(100vh - 84px)', paddingTop: '10px' }}>

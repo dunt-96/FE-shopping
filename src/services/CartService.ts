@@ -48,9 +48,28 @@ const deleteManyItemsInCart = async (ids: string[]) => {
     }
 }
 
+const updateItemInCart = async (data) => {
+    try {
+        const res = await axios.put(`${process.env.REACT_APP_API_URL}/cart/update`, data);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+const countItemInCart = async () => {
+    try {
+        const res = await axios.put(`${process.env.REACT_APP_API_URL}/cart/count-item-in-card`);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export default {
     createCart,
     getAllItems,
     deleteItemInCart,
-    deleteManyItemsInCart
+    deleteManyItemsInCart,
+    updateItemInCart,
+    countItemInCart
 }

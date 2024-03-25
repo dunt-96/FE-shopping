@@ -93,21 +93,36 @@ const OrderPage = () => {
     }, [order.listIdChecked])
 
     const onChange = (e) => {
-        if (order?.listIdChecked.includes(e.target.value)) {
-            const newListChecked = order?.listIdChecked.filter((item) => item !== e.target.value)
+        if (order?.listIdChecked?.includes(e.target.value)) {
+            const newListChecked = order?.listIdChecked?.filter((item) => item !== e.target.value)
             dispatch(updateListChecked(newListChecked));
             handleCalcPrice();
         } else {
-            dispatch(updateListChecked([...order.listIdChecked, e.target.value]));
+            console.log('?????', order.listIdChecked);
+            dispatch(updateListChecked([...(order?.listIdChecked ?? []), e.target.value]));
             handleCalcPrice();
         }
     };
 
-    const handleChangeCount = (type, idProduct) => {
+    const handleChangeCount = async (type, item) => {
+        let res: Record<string, any> = {};
+        let amount = item.amount;
         if (type === 'increase') {
-            dispatch(increaseAmount({ idProduct }))
+            setTimeout(async () => {
+                ++amount
+                res = await CartService.updateItemInCart({ ...item, amount: amount });
+                if (res.status === "OK") {
+                    dispatch(increaseAmount(item.product));
+                }
+            }, 500);
         } else {
-            dispatch(decreaseAmount({ idProduct }))
+            setTimeout(async () => {
+                --amount
+                res = await CartService.updateItemInCart({ ...item, amount: amount });
+                if (res.status === "OK") {
+                    dispatch(decreaseAmount(item.product))
+                }
+            }, 500);
         }
     }
 
@@ -126,7 +141,7 @@ const OrderPage = () => {
     }
 
     const handleOnchangeCheckAll = (e) => {
-        if (order.orderItems.length === 0) {
+        if (order?.orderItems?.length === 0) {
             return;
         }
         if (e.target.checked) {
@@ -204,7 +219,7 @@ const OrderPage = () => {
                     <WrapperLeft>
                         <WrapperStyleHeader>
                             <span style={{ display: 'inline-block', width: '390px' }}>
-                                <Checkbox onChange={handleOnchangeCheckAll} checked={!(order.orderItems.length === 0) && order.listIdChecked?.length === order?.orderItems?.length}></Checkbox>
+                                <Checkbox onChange={handleOnchangeCheckAll} checked={!(order?.orderItems?.length === 0) && order?.listIdChecked?.length === order?.orderItems?.length}></Checkbox>
                                 <span> Tất cả ({order?.orderItems?.length} sản phẩm)</span>
                             </span>
                             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -215,7 +230,7 @@ const OrderPage = () => {
                             </div>
                         </WrapperStyleHeader>
                         <WrapperListOrder>
-                            {order?.orderItems?.map((ord) => {
+                            {order?.orderItems && order?.orderItems?.map((ord) => {
                                 return (
                                     <WrapperItemOrder>
                                         <div style={{ width: '390px', display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -235,11 +250,11 @@ const OrderPage = () => {
                                                 <span style={{ fontSize: '14px', color: '#242424', fontWeight: '600' }}>{convertPrice(ord?.price)}</span>
                                             </span>
                                             <WrapperCountOrder>
-                                                <button style={{ flex: 1, border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease', ord?.product)}>
+                                                <button style={{ flex: 1, border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease', ord)}>
                                                     <MinusOutlined style={{ color: '#000', fontSize: '10px' }} />
                                                 </button>
                                                 <WrapperInputNumber defaultValue={ord?.amount} value={ord?.amount} size="small" />
-                                                <button style={{ flex: 1, border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', ord?.product)}>
+                                                <button style={{ flex: 1, border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', ord)}>
                                                     <PlusOutlined style={{ color: '#000', fontSize: '10px' }} />
                                                 </button>
                                             </WrapperCountOrder>

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { refetchCountItems } from '../../redux/slices/orderSlice';
 import { onSearchReducer } from '../../redux/slices/productSlice';
 import { resetUser, userState } from '../../redux/slices/userSlice';
 import UserService from '../../services/UserService';
@@ -33,6 +34,30 @@ const HeaderComponent = (props) => {
     const [avatar, setAvatar] = useState('');
 
     console.log('order item', orderState.orderItems);
+
+    // const fetchItemInCart = async () => {
+    //     const res = await CartService.countItemInCart();
+    //     return res;
+    // }
+
+    // const queryCountItemInCart = useQuery({
+    //     queryKey: ['count'],
+    //     queryFn: async () => await fetchItemInCart(),
+    //     retry: 3,
+    //     retryDelay: 1000
+    // });
+
+    // const { data: itemsInCart, isPending: isPendingCountItemInCart } = queryCountItemInCart;
+
+    // console.log('item in cart', itemsInCart);
+    const handleFetchCount = async () => {
+        await dispatch(refetchCountItems());
+    }
+
+    useEffect(() => {
+        handleFetchCount();
+    }, []);
+
 
     const handleLogout = async () => {
         setLoading(true);
@@ -121,7 +146,7 @@ const HeaderComponent = (props) => {
                 {!isHiddenCart &&
                     (
                         <div onClick={() => navigate('/order')} style={{ cursor: "pointer", alignItems: 'center', gap: '5px' }}>
-                            <Badge count={orderState?.orderItems?.length} size='small'>
+                            <Badge count={orderState.itemsInCart} size='small'>
                                 <ShoppingCartOutlined style={{ fontSize: '30px', color: '#fff' }} />
                             </Badge>
                             <WrapperTextHeaderSmall>Gio hang</WrapperTextHeaderSmall>

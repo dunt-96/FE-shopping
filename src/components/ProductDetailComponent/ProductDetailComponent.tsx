@@ -10,7 +10,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Anh from '../../assets/images/anh.jpg'
 import { useMutationHook } from '../../hooks/mutationHook'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
-import { addOrderProduct } from '../../redux/slices/orderSlice'
+import { refetchCountItems } from '../../redux/slices/orderSlice'
 import CartService from '../../services/CartService'
 import ProductService from '../../services/ProductService'
 import { convertPrice } from '../../utils'
@@ -113,7 +113,9 @@ const ProductDetailComponent = ({ productId }) => {
       {
         onSuccess: (val) => {
           message.success('Thêm vào giỏ hàng thành công');
-          dispatch(addOrderProduct(val));
+
+          // dispatch(addOrderProduct(val));
+          dispatch(refetchCountItems());
         }
       }
     );
