@@ -6,7 +6,7 @@ export const WrapperCardStyle = styled(Card)`
     & img {
         height: 200px;
         width: 200px;
-    }
+    };
 `
 
 export const StyleNameProduct = styled.div`

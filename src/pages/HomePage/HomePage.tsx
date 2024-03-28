@@ -19,7 +19,7 @@ const HomePage = () => {
     const [loading, setLoading] = useState(false);
     const [allTypeProducts, setAllTypeProduct] = useState([]);
     const searchDebounce = useDebounce(searchProduct, 1000);
-    const [limit, setLimit] = useState(6);
+    const [limit, setLimit] = useState(100);
 
     const fetchAllProduct = async (context) => {
         const limit = context && context.queryKey[1];
@@ -77,19 +77,21 @@ const HomePage = () => {
                         <WrapperProducts style={{ marginTop: '20px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '30px' }}>
                             {products && products?.data.map(
                                 (product) => {
-                                    return (<CardComponent
-                                        key={product._id}
-                                        countInStock={product.countInStock}
-                                        description={product.desciption}
-                                        image={product.image}
-                                        name={product.name}
-                                        price={product.price}
-                                        rating={product.rating}
-                                        type={product.type}
-                                        discount={product.discount}
-                                        selled={product.selled}
-                                        id={product._id}
-                                    ></CardComponent>)
+                                    return (
+                                        !(product.countInStock === 0) &&
+                                        <CardComponent
+                                            key={product._id}
+                                            countInStock={product.countInStock}
+                                            description={product.desciption}
+                                            image={product.image}
+                                            name={product.name}
+                                            price={product.price}
+                                            rating={product.rating}
+                                            type={product.type}
+                                            discount={product.discount}
+                                            selled={product.selled}
+                                            id={product._id}
+                                        ></CardComponent>)
                                 }
                             )}
                         </WrapperProducts>

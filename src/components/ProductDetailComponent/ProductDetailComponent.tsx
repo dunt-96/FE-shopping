@@ -105,7 +105,7 @@ const ProductDetailComponent = ({ productId }) => {
         product: product?._id,
         discount: product.discount,
         rating: product?.rating,
-        countInStock: product.countInStock,
+        countInStock: product?.countInStock,
         type: product.type,
         selled: product.selled,
         user: user.id
@@ -185,7 +185,7 @@ const ProductDetailComponent = ({ productId }) => {
           <WrapperQualityProduct>
             <ButtonComponent onClick={decreaseQuantity} icon={<MinusOutlined style={{ color: '#000', cursor: 'pointer' }} />} />
             <WrapperInputNumber onChange={onChange} value={quantity} />
-            <ButtonComponent onClick={handleChangeIncrease} icon={<PlusOutlined style={{ color: '#000', cursor: 'pointer' }} />} />
+            <ButtonComponent style={{ background: `${product?.countInStock === quantity ? '#cecece' : '#fff'}`, cursor: `${product?.countInStock === quantity ? 'not-allowed' : 'pointer'}` }} onClick={product?.countInStock === quantity ? null : handleChangeIncrease} icon={<PlusOutlined style={{ color: '#000', }} />} />
           </WrapperQualityProduct>
           <div style={{ borderBottom: '1px solid #cecece', marginTop: '15px' }}></div>
           {/* <input type="number" id="fname" name="fname" style={{ height: '28px', width: '32px', borderRadius: '5px', border: '1px solid #d9d9d9', margin: '0 5px 0 5px', justifyContent: 'center', textAlign: 'center' }} /> */}

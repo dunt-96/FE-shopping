@@ -81,9 +81,9 @@ const HeaderComponent = (props) => {
 
     const content = (
         <div>
-            <WrapperContentPopup onClick={handleLogout}>Dang xuat</WrapperContentPopup>
-            {user.isAdmin && <WrapperContentPopup onClick={() => navigate('/system/admin')}>Quan ly he thong</WrapperContentPopup>}
             <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thong tin nguoi dung</WrapperContentPopup>
+            {user.isAdmin && <WrapperContentPopup onClick={() => navigate('/system/admin')}>Quan ly he thong</WrapperContentPopup>}
+            <WrapperContentPopup onClick={handleLogout}>Dang xuat</WrapperContentPopup>
         </div>
     )
 

@@ -84,8 +84,11 @@ export const WrapperInputNumber = styled(InputNumber)`
     text-align: center;
     flex: 2;
     align-content:center;
+    border: 2px solid grey;
     border-top: none;
     border-bottom: none;
+    border-radius: 0px;
+    height: 25px;
     overflow-wrap: break-word;
     justify-content: center;
     & .ant-input-number-handler-wrap {

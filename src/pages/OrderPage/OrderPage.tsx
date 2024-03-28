@@ -9,6 +9,7 @@ import InputComponent from '../../components/InputComponent/InputComponent';
 import { Loading } from '../../components/Loading/Loading';
 import * as message from '../../components/Message/Message';
 import ModalComponent from '../../components/ModelComponet/ModelComponent';
+import StepComponent from '../../components/Step/StepComponent';
 import { useMutationHook } from '../../hooks/mutationHook';
 import { useAppSelector } from '../../redux/hooks';
 import { calcPrice, decreaseAmount, increaseAmount, updateListChecked, updateListOrderItems, updateListOrderSelected } from '../../redux/slices/orderSlice';
@@ -23,7 +24,6 @@ const OrderPage = () => {
     const userState = useAppSelector((state) => state.user);
     const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false)
     const navigate = useNavigate();
-
     // const [listChecked, setListChecked] = useState<string[]>(order.listIdChecked);
     const dispatch = useDispatch()
     const [form] = Form.useForm();
@@ -108,21 +108,17 @@ const OrderPage = () => {
         let res: Record<string, any> = {};
         let amount = item.amount;
         if (type === 'increase') {
+            dispatch(increaseAmount(item.product));
             setTimeout(async () => {
                 ++amount
                 res = await CartService.updateItemInCart({ ...item, amount: amount });
-                if (res.status === "OK") {
-                    dispatch(increaseAmount(item.product));
-                }
-            }, 500);
+            }, 1000);
         } else {
+            dispatch(decreaseAmount(item.product))
             setTimeout(async () => {
                 --amount
                 res = await CartService.updateItemInCart({ ...item, amount: amount });
-                if (res.status === "OK") {
-                    dispatch(decreaseAmount(item.product))
-                }
-            }, 500);
+            }, 1000);
         }
     }
 
@@ -210,13 +206,32 @@ const OrderPage = () => {
         setIsOpenModalUpdateInfo(true)
     }
 
-    console.log('order irsm00000', order.orderItems);
+    const itemsStep = [
+        {
+            title: 'Finished',
+            description: 'asdsada',
+            subTitle: 'dkasod'
+        },
+        {
+            title: 'In Progress',
+            description: '',
+        },
+        {
+            title: 'Waiting',
+            description: '',
+        },
+    ]
 
     return (
         <div style={{ background: '#f5f5fa', alignContent: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: 'calc(100vh - 84px)', paddingTop: '10px' }}>
             <div style={{ height: '100%', width: '2150px', margin: '0 auto', display: 'flex', justifyContent: 'center', }}>
                 <div style={{ display: 'flex', padding: '0 20px', justifyContent: 'center', height: '100%', width: '80%', flexDirection: 'row' }}>
                     <WrapperLeft>
+                        <WrapperStyleHeader>
+                            <StepComponent
+                                items={itemsStep}
+                            />
+                        </WrapperStyleHeader>
                         <WrapperStyleHeader>
                             <span style={{ display: 'inline-block', width: '390px' }}>
                                 <Checkbox onChange={handleOnchangeCheckAll} checked={!(order?.orderItems?.length === 0) && order?.listIdChecked?.length === order?.orderItems?.length}></Checkbox>
@@ -254,8 +269,8 @@ const OrderPage = () => {
                                                     <MinusOutlined style={{ color: '#000', fontSize: '10px' }} />
                                                 </button>
                                                 <WrapperInputNumber defaultValue={ord?.amount} value={ord?.amount} size="small" />
-                                                <button style={{ flex: 1, border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase', ord)}>
-                                                    <PlusOutlined style={{ color: '#000', fontSize: '10px' }} />
+                                                <button style={{ flex: 1, border: 'none', background: `${ord.countInStock === ord.amount ? '#cecece' : 'transparent'}`, cursor: `${ord.countInStock === ord.amount ? 'not-allowed' : 'pointer'}` }} onClick={() => ord.countInStock === ord.amount ? null : handleChangeCount('increase', ord)}>
+                                                    <PlusOutlined style={{ color: '#000', fontSize: '10px', width: '100%', height: '24px' }} />
                                                 </button>
                                             </WrapperCountOrder>
                                             <span style={{ color: 'rgb(255, 66, 78)', fontSize: '13px', fontWeight: 500 }}>{convertPrice(ord!.price * ord?.amount)}</span>

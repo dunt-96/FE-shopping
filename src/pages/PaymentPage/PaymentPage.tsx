@@ -67,18 +67,24 @@ const PaymentPage = () => {
                     user: userState.id,
                 },
                 {
-                    onSuccess: () => {
-                        message.success('Đặt hàng thành công');
-                        dispatch(refetchCountItems());
-                        // setTimeout((time) => {
-                        //     navigate('/orderSuccess', {
-                        //         state: {
-                        //             delivery,
-                        //             payment,
-                        //             orders: order.orderItemsSelected
-                        //         }
-                        //     });
-                        // }, 1000)
+                    onSuccess: (val) => {
+                        console.log('val status', val);
+                        if (val.status === "OK") {
+                            message.success('Đặt hàng thành công');
+                            dispatch(refetchCountItems());
+                            // console.log('order.orderItemsSelected', order.orderItemsSelected);
+                            setTimeout((time) => {
+                                navigate('/orderSuccess', {
+                                    state: {
+                                        delivery,
+                                        payment,
+                                        orders: order.orderItemsSelected
+                                    }
+                                });
+                            }, 1000)
+                        } else {
+                            message.error('Đặt hàng thất bại');
+                        }
                     }
                 }
             )
